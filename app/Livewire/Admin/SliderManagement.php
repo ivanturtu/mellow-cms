@@ -124,10 +124,10 @@ class SliderManagement extends Component
             $processedImages = $this->createResponsiveImages($this->image, 'sliders', 85);
             
             // Store the medium size as the main image
-            $data['image'] = $processedImages['md']['path'];
+            $data['image'] = $processedImages['sizes']['md']['path'];
             
             // Store all sizes in a JSON field for future use
-            $data['image_sizes'] = json_encode($processedImages);
+            $data['image_sizes'] = json_encode($processedImages['sizes']);
         }
 
         if ($this->editingSlider) {

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HandlesImageOptimization;
 
 class Slider extends Model
 {
+    use HandlesImageOptimization;
+    
     protected $fillable = [
         'title',
         'description',
@@ -40,8 +43,14 @@ class Slider extends Model
      */
     public function getOptimizedImageUrl(string $size = 'md'): string
     {
-        if ($this->image_sizes && isset($this->image_sizes[$size])) {
-            return asset('storage/' . $this->image_sizes[$size]['path']);
+        // Handle case where image_sizes is still a JSON string
+        $imageSizes = $this->image_sizes;
+        if (is_string($imageSizes)) {
+            $imageSizes = json_decode($imageSizes, true);
+        }
+        
+        if ($imageSizes && isset($imageSizes[$size])) {
+            return asset('storage/' . $imageSizes[$size]['path']);
         }
         
         // Fallback to original image
@@ -55,7 +64,13 @@ class Slider extends Model
      */
     public function getResponsiveSrcset(): string
     {
-        if (!$this->image_sizes) {
+        // Handle case where image_sizes is still a JSON string
+        $imageSizes = $this->image_sizes;
+        if (is_string($imageSizes)) {
+            $imageSizes = json_decode($imageSizes, true);
+        }
+        
+        if (!$imageSizes) {
             return '';
         }
 
@@ -64,8 +79,8 @@ class Slider extends Model
         $widths = ['xs' => 400, 'sm' => 600, 'md' => 800, 'lg' => 1200, 'xl' => 1920];
 
         foreach ($sizes as $size) {
-            if (isset($this->image_sizes[$size])) {
-                $url = asset('storage/' . $this->image_sizes[$size]['path']);
+            if (isset($imageSizes[$size])) {
+                $url = asset('storage/' . $imageSizes[$size]['path']);
                 $width = $widths[$size];
                 $srcset[] = $url . ' ' . $width . 'w';
             }
