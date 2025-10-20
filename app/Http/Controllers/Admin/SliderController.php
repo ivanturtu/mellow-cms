@@ -49,6 +49,11 @@ class SliderController extends Controller
         }
 
         $data['is_active'] = $request->has('is_active');
+        
+        // Set sort_order if not provided
+        if (!isset($data['sort_order']) || $data['sort_order'] === null) {
+            $data['sort_order'] = Slider::max('sort_order') + 1;
+        }
 
         Slider::create($data);
 
@@ -99,6 +104,11 @@ class SliderController extends Controller
         }
 
         $data['is_active'] = $request->has('is_active');
+        
+        // Ensure sort_order is set
+        if (!isset($data['sort_order']) || $data['sort_order'] === null) {
+            $data['sort_order'] = $slider->sort_order ?? Slider::max('sort_order') + 1;
+        }
 
         $slider->update($data);
 

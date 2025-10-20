@@ -2,75 +2,51 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\SliderController;
-use App\Http\Controllers\Admin\RoomController;
-use App\Http\Controllers\Admin\GalleryController;
-use App\Http\Controllers\Admin\ServiceController;
-use App\Http\Controllers\Admin\BlogController;
-use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\RobotsController;
 
 // Frontend routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/room/{slug}', [App\Http\Controllers\RoomController::class, 'show'])->name('room.details');
+Route::post('/booking-request', [App\Http\Controllers\BookingRequestController::class, 'store'])->name('booking.request');
+
+// Blog routes
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+
+// Contact routes
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Newsletter routes
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::post('/newsletter/unsubscribe', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
+Route::get('/newsletter/check', [NewsletterController::class, 'checkSubscription'])->name('newsletter.check');
+
+// SEO routes
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
 
 // Admin routes
 Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     
-    // Resource routes
-    Route::resource('sliders', SliderController::class)->names([
-        'index' => 'admin.sliders.index',
-        'create' => 'admin.sliders.create',
-        'store' => 'admin.sliders.store',
-        'show' => 'admin.sliders.show',
-        'edit' => 'admin.sliders.edit',
-        'update' => 'admin.sliders.update',
-        'destroy' => 'admin.sliders.destroy',
-    ]);
-    
-    Route::resource('rooms', RoomController::class)->names([
-        'index' => 'admin.rooms.index',
-        'create' => 'admin.rooms.create',
-        'store' => 'admin.rooms.store',
-        'show' => 'admin.rooms.show',
-        'edit' => 'admin.rooms.edit',
-        'update' => 'admin.rooms.update',
-        'destroy' => 'admin.rooms.destroy',
-    ]);
-    
-    Route::resource('gallery', GalleryController::class)->names([
-        'index' => 'admin.gallery.index',
-        'create' => 'admin.gallery.create',
-        'store' => 'admin.gallery.store',
-        'show' => 'admin.gallery.show',
-        'edit' => 'admin.gallery.edit',
-        'update' => 'admin.gallery.update',
-        'destroy' => 'admin.gallery.destroy',
-    ]);
-    
-    Route::resource('services', ServiceController::class)->names([
-        'index' => 'admin.services.index',
-        'create' => 'admin.services.create',
-        'store' => 'admin.services.store',
-        'show' => 'admin.services.show',
-        'edit' => 'admin.services.edit',
-        'update' => 'admin.services.update',
-        'destroy' => 'admin.services.destroy',
-    ]);
-    
-    Route::resource('blogs', BlogController::class)->names([
-        'index' => 'admin.blogs.index',
-        'create' => 'admin.blogs.create',
-        'store' => 'admin.blogs.store',
-        'show' => 'admin.blogs.show',
-        'edit' => 'admin.blogs.edit',
-        'update' => 'admin.blogs.update',
-        'destroy' => 'admin.blogs.destroy',
-    ]);
-    
-    // Settings routes
-    Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings.index');
-    Route::post('/settings', [SettingController::class, 'store'])->name('admin.settings.store');
+    // Livewire Admin Routes
+    Route::get('/sliders', \App\Livewire\Admin\SliderManagement::class)->name('admin.sliders');
+    Route::get('/rooms', \App\Livewire\Admin\RoomManagement::class)->name('admin.rooms');
+    Route::get('/gallery', \App\Livewire\Admin\GalleryManagement::class)->name('admin.gallery');
+    Route::get('/services', \App\Livewire\Admin\ServiceManagement::class)->name('admin.services');
+    Route::get('/blogs', \App\Livewire\Admin\BlogManagement::class)->name('admin.blogs');
+            Route::get('/settings', \App\Livewire\Admin\SettingsManagement::class)->name('admin.settings');
+            Route::get('/statistics', \App\Livewire\Admin\StatisticManagement::class)->name('admin.statistics');
+            Route::get('/about', \App\Livewire\Admin\AboutManagement::class)->name('admin.about');
+    Route::get('/booking-requests', \App\Livewire\Admin\BookingRequestManagement::class)->name('admin.booking-requests');
+    Route::get('/contact-messages', \App\Livewire\Admin\ContactMessageManagement::class)->name('admin.contact-messages');
+    Route::get('/seo', \App\Livewire\Admin\SeoManagement::class)->name('admin.seo');
 });
 
 // Keep existing auth routes

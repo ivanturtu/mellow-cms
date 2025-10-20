@@ -459,6 +459,263 @@ svg.social:hover {
 /* Swiper
 ------------------------------------------------------------- */
 
+/* Slider Fade Effect */
+.slider .swiper-slide {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.slider .swiper-slide-active {
+  opacity: 1;
+}
+
+.slider .swiper-slide-next,
+.slider .swiper-slide-prev {
+  opacity: 0;
+}
+
+/* Slider Container */
+.slider {
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+/* Slider Pagination */
+.slider .swiper-pagination {
+  bottom: 30px;
+  z-index: 10;
+}
+
+.slider .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.5);
+  opacity: 1;
+  margin: 0 8px;
+  transition: all 0.3s ease;
+}
+
+.slider .swiper-pagination-bullet-active {
+  background-color: #fff;
+  transform: scale(1.2);
+}
+
+/* Slider Overlay */
+.slider-slide {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+.slider-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%);
+  border-radius: 1.5rem;
+  z-index: 1;
+}
+
+.slider-slide .row {
+  position: relative;
+  z-index: 2;
+  transition: all 0.6s ease;
+  margin-left: 0;
+  margin-right: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.slider-slide .col-md-6,
+.slider-slide .col-lg-5,
+.slider-slide .col-xl-6 {
+  padding-left: 1rem;
+  padding-right: 2rem;
+  max-width: 50%;
+  margin-left: 0;
+}
+
+/* Slider text positioning */
+.slider-slide .text-start {
+  padding-left: 0.5rem;
+  padding-right: 1rem;
+}
+
+/* Responsive adjustments for slider text */
+@media (max-width: 768px) {
+  .slider-slide .col-md-6,
+  .slider-slide .col-lg-5,
+  .slider-slide .col-xl-6 {
+    max-width: 100%;
+    padding-left: 0.5rem;
+    padding-right: 1rem;
+  }
+  
+  .slider-slide .text-start {
+    padding-left: 0.5rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Slider Content Animation */
+.slider-slide .row > div {
+  transition: all 0.8s ease;
+}
+
+.slider-slide .row h2 {
+  animation: slideInLeft 0.8s ease-out;
+}
+
+.slider-slide .row p {
+  animation: slideInLeft 0.8s ease-out 0.2s both;
+}
+
+.slider-slide .row .btn {
+  animation: slideInLeft 0.8s ease-out 0.4s both;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Header Navigation */
+.navbar-nav {
+  margin-left: auto;
+}
+
+.navbar-nav .nav-link {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--bs-primary);
+}
+
+/* Offcanvas Menu */
+.offcanvas-body {
+  padding: 2rem;
+}
+
+.offcanvas-body .navbar-nav {
+  margin-left: 0;
+  text-align: center;
+}
+
+.offcanvas-body .navbar-nav .nav-item {
+  margin: 0.5rem 0;
+}
+
+/* Fixed Booking Form */
+.fixed-booking-form {
+  position: absolute;
+  top: 50%;
+  right: 2rem;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 400px;
+  max-width: 90vw;
+  animation: slideInRight 0.8s ease-out;
+  border-radius: 1.5rem;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+.fixed-booking-form form {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.fixed-booking-form:hover form {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.fixed-booking-form h3 {
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.fixed-booking-form .form-label {
+  color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.fixed-booking-form .form-control {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.fixed-booking-form .form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(var(--primary-color-rgb), 0.25);
+}
+
+.fixed-booking-form .btn {
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .fixed-booking-form {
+    width: 350px;
+  }
+}
+
+@media (max-width: 992px) {
+  .fixed-booking-form {
+    position: relative;
+    top: auto;
+    right: auto;
+    transform: none;
+    width: 100%;
+    margin-top: 2rem;
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .fixed-booking-form {
+    margin-top: 1rem;
+  }
+  
+  .fixed-booking-form form {
+    padding: 1.5rem;
+  }
+}
+
 /* room */
 .swiper-horizontal>.swiper-pagination-bullets .swiper-pagination-bullet,
 .swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet {
@@ -475,12 +732,130 @@ svg.social:hover {
   background-color: var(--primary-color);
 }
 
-/* gallery */
-.main-slider-button-next.swiper-button-disabled,
-.main-slider-button-prev.swiper-button-disabled {
-  opacity: .35;
-  cursor: auto;
-  pointer-events: none;
+/* Gallery */
+.gallery-swiper {
+  padding: 2rem 0;
+}
+
+.gallery-swiper .swiper-slide {
+  height: 600px;
+  overflow: hidden;
+  border-radius: 12px;
+  max-width: 100%;
+}
+
+.gallery-swiper .swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-swiper .swiper-slide:hover img {
+  transform: scale(1.05);
+}
+
+.gallery-button-next,
+.gallery-button-prev {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.gallery-button-next:hover,
+.gallery-button-prev:hover {
+  transform: scale(1.1);
+}
+
+.gallery-button-next svg,
+.gallery-button-prev svg {
+  transition: all 0.3s ease;
+}
+
+.gallery-button-next:hover svg,
+.gallery-button-prev:hover svg {
+  background-color: var(--primary-color) !important;
+  color: white;
+}
+
+/* Gallery responsive */
+@media (max-width: 768px) {
+  .gallery-swiper .swiper-slide {
+    height: 400px;
+  }
+  
+  .gallery-button-next,
+  .gallery-button-prev {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-swiper .swiper-slide {
+    height: 350px;
+  }
+}
+
+/* Statistics Section */
+.statistic-item {
+  padding: 1rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.statistic-item:hover {
+  transform: translateY(-5px);
+}
+
+.statistic-value {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.statistic-icon {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.statistic-number {
+  font-family: "Cormorant Upright", serif;
+  font-size: 4.5rem;
+  font-weight: 400;
+  color: var(--primary-color);
+  line-height: 1;
+  display: block;
+}
+
+.statistic-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.statistic-description {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0;
+  line-height: 1.4;
+}
+
+/* Statistics responsive */
+@media (max-width: 768px) {
+  .statistic-item {
+    padding: 0.5rem 0.5rem;
+  }
+  
+  .statistic-number {
+    font-family: "Cormorant Upright", serif;
+    font-size: 3.5rem;
+    font-weight: 400;
+  }
+  
+  .statistic-icon {
+    font-size: 2rem;
+  }
 }
 
 

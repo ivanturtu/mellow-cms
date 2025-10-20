@@ -20,6 +20,55 @@
     })
   }
 
+  // init Statistics Counter
+  var initStatisticsCounter = function () {
+    const statisticNumbers = document.querySelectorAll('.statistic-number');
+    
+    const animateNumber = (element, target, duration = 2000) => {
+      const start = 0;
+      const increment = target / (duration / 16);
+      let current = start;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        
+        // Formatta il numero per mantenere K, M, etc.
+        const originalText = element.getAttribute('data-original');
+        if (originalText.includes('K')) {
+          element.textContent = Math.floor(current) + 'K';
+        } else if (originalText.includes('M')) {
+          element.textContent = Math.floor(current) + 'M';
+        } else {
+          element.textContent = Math.floor(current);
+        }
+      }, 16);
+    };
+
+    // Observer per attivare l'animazione quando la sezione è visibile
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const element = entry.target;
+          const target = parseInt(element.getAttribute('data-target'));
+          animateNumber(element, target);
+          observer.unobserve(element);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    statisticNumbers.forEach(number => {
+      const originalText = number.textContent;
+      number.setAttribute('data-original', originalText);
+      number.setAttribute('data-target', originalText.replace(/[^\d]/g, ''));
+      number.textContent = '0';
+      observer.observe(number);
+    });
+  }
+
   $(document).ready(function () {
     // Isotope Initialization
     var $container = $('.isotope-container').isotope({
@@ -56,6 +105,45 @@
     // Swiper Initialization
     var sliderSwiper = new Swiper(".slider", {
       effect: "fade",
+      fadeEffect: {
+        crossFade: true
+      },
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      loop: true,
+      speed: 1000,
+      on: {
+        slideChange: function () {
+          // Add subtle animation to content
+          const activeSlide = this.slides[this.activeIndex];
+          const content = activeSlide.querySelector('.row');
+          if (content) {
+            content.style.opacity = '0';
+            content.style.transform = 'translateY(30px)';
+            setTimeout(() => {
+              content.style.transition = 'all 0.6s ease';
+              content.style.opacity = '1';
+              content.style.transform = 'translateY(0)';
+            }, 100);
+          }
+          
+          // Add subtle animation to fixed booking form
+          const bookingForm = document.querySelector('.fixed-booking-form');
+          if (bookingForm) {
+            bookingForm.style.transform = 'translateY(-50%) scale(0.98)';
+            setTimeout(() => {
+              bookingForm.style.transition = 'all 0.4s ease';
+              bookingForm.style.transform = 'translateY(-50%) scale(1)';
+            }, 200);
+          }
+        }
+      }
     });
 
     var roomSwiper = new Swiper(".room-swiper", {
@@ -78,13 +166,26 @@
       },
     });
 
-    var gallerySwiper = new Swiper(".gallery-swiper", {
-      effect: "fade",
-      navigation: {
-        nextEl: ".main-slider-button-next",
-        prevEl: ".main-slider-button-prev",
-      },
-    });
+    // Gallery Swiper
+    if (document.querySelector(".gallery-swiper")) {
+      var gallerySwiper = new Swiper(".gallery-swiper", {
+        effect: "slide",
+        slidesPerView: 1,
+        spaceBetween: 30,
+        loop: true,
+        autoplay: {
+          delay: 3000,
+          disableOnInteraction: false,
+        },
+        navigation: {
+          nextEl: ".gallery-button-next",
+          prevEl: ".gallery-button-prev",
+        },
+        // Rimuovo i breakpoints per mostrare sempre 1 immagine
+      });
+      
+      console.log("Gallery Swiper initialized");
+    }
 
     var thumbSlider = new Swiper(".product-thumbnail-slider", {
       autoplay: true,
@@ -111,14 +212,17 @@
     // Chocolat
     initChocolat();
 
+    // Statistics Counter
+    initStatisticsCounter();
+
     // Animate on Scroll
     AOS.init({
       duration: 1000,
       once: true,
     });
 
-    // DateTimePicker
-    new DateTimePickerComponent.DatePicker('select-arrival-date');
-    new DateTimePickerComponent.DatePicker('select-departure-date');
+    // DateTimePicker - Disabled for native HTML5 date inputs
+    // new DateTimePickerComponent.DatePicker('checkin-date');
+    // new DateTimePickerComponent.DatePicker('checkout-date');
   });
 })(jQuery);

@@ -6,12 +6,19 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }} - Admin</title>
+    <!-- Updated: {{ now() }} -->
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Modal Fix CSS -->
+    <link rel="stylesheet" href="{{ asset('css/modal-fix.css') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -63,24 +70,39 @@
                         <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
                             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                         </a>
-                        <a class="nav-link {{ request()->routeIs('admin.sliders.*') ? 'active' : '' }}" href="{{ route('admin.sliders.index') }}">
+                        <a class="nav-link {{ request()->routeIs('admin.sliders') ? 'active' : '' }}" href="{{ route('admin.sliders') }}">
                             <i class="fas fa-images me-2"></i> Slider
                         </a>
-                        <a class="nav-link {{ request()->routeIs('admin.rooms.*') ? 'active' : '' }}" href="{{ route('admin.rooms.index') }}">
+                        <a class="nav-link {{ request()->routeIs('admin.rooms') ? 'active' : '' }}" href="{{ route('admin.rooms') }}">
                             <i class="fas fa-bed me-2"></i> Camere
                         </a>
-                        <a class="nav-link {{ request()->routeIs('admin.gallery.*') ? 'active' : '' }}" href="{{ route('admin.gallery.index') }}">
+                        <a class="nav-link {{ request()->routeIs('admin.gallery') ? 'active' : '' }}" href="{{ route('admin.gallery') }}">
                             <i class="fas fa-camera me-2"></i> Gallery
                         </a>
-                        <a class="nav-link {{ request()->routeIs('admin.services.*') ? 'active' : '' }}" href="{{ route('admin.services.index') }}">
+                        <a class="nav-link {{ request()->routeIs('admin.services') ? 'active' : '' }}" href="{{ route('admin.services') }}">
                             <i class="fas fa-concierge-bell me-2"></i> Servizi
                         </a>
-                        <a class="nav-link {{ request()->routeIs('admin.blogs.*') ? 'active' : '' }}" href="{{ route('admin.blogs.index') }}">
+                        <a class="nav-link {{ request()->routeIs('admin.blogs') ? 'active' : '' }}" href="{{ route('admin.blogs') }}">
                             <i class="fas fa-blog me-2"></i> Blog
                         </a>
-                        <a class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" href="{{ route('admin.settings.index') }}">
-                            <i class="fas fa-cog me-2"></i> Impostazioni
+                        <a class="nav-link {{ request()->routeIs('admin.statistics') ? 'active' : '' }}" href="{{ route('admin.statistics') }}">
+                            <i class="fas fa-chart-bar me-2"></i> Statistiche
                         </a>
+            <a class="nav-link {{ request()->routeIs('admin.about') ? 'active' : '' }}" href="{{ route('admin.about') }}">
+                <i class="fas fa-info-circle me-2"></i> About Us
+            </a>
+            <a class="nav-link {{ request()->routeIs('admin.booking-requests') ? 'active' : '' }}" href="{{ route('admin.booking-requests') }}">
+                <i class="fas fa-calendar-check me-2"></i> Prenotazioni
+            </a>
+            <a class="nav-link {{ request()->routeIs('admin.contact-messages') ? 'active' : '' }}" href="{{ route('admin.contact-messages') }}">
+                <i class="fas fa-envelope me-2"></i> Messaggi
+            </a>
+            <a class="nav-link {{ request()->routeIs('admin.seo') ? 'active' : '' }}" href="{{ route('admin.seo') }}">
+                <i class="fas fa-search me-2"></i> SEO
+            </a>
+            <a class="nav-link {{ request()->routeIs('admin.settings') ? 'active' : '' }}" href="{{ route('admin.settings') }}">
+                <i class="fas fa-cog me-2"></i> Impostazioni
+            </a>
                         <hr class="text-white-50">
                         <a class="nav-link" href="{{ route('home') }}" target="_blank">
                             <i class="fas fa-external-link-alt me-2"></i> Vedi Sito
@@ -151,6 +173,75 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Modal Fix Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Listen for Livewire events
+            document.addEventListener('livewire:init', () => {
+                // Close modal when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('modal') && e.target.classList.contains('show')) {
+                        // Find the close method for this modal
+                        const modal = e.target;
+                        const closeButton = modal.querySelector('[wire\\:click*="cancel"], [wire\\:click*="hide"], [wire\\:click*="close"]');
+                        if (closeButton) {
+                            closeButton.click();
+                        }
+                    }
+                });
+
+                // Handle ESC key to close modals
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        const openModal = document.querySelector('.modal.show');
+                        if (openModal) {
+                            const closeButton = openModal.querySelector('[wire\\:click*="cancel"], [wire\\:click*="hide"], [wire\\:click*="close"]');
+                            if (closeButton) {
+                                closeButton.click();
+                            }
+                        }
+                    }
+                });
+
+                // Force close modal when Livewire resets
+                Livewire.on('close-modal', () => {
+                    const openModal = document.querySelector('.modal.show');
+                    if (openModal) {
+                        openModal.classList.remove('show');
+                        openModal.style.display = 'none';
+                        document.body.classList.remove('modal-open');
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) {
+                            backdrop.remove();
+                        }
+                    }
+                });
+            });
+        });
+
+        // Additional modal cleanup
+        function cleanupModal() {
+            // Remove modal backdrop
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+            
+            // Remove modal-open class from body
+            document.body.classList.remove('modal-open');
+            
+            // Hide any visible modals
+            const modals = document.querySelectorAll('.modal.show');
+            modals.forEach(modal => {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            });
+        }
+
+        // Call cleanup on page unload
+        window.addEventListener('beforeunload', cleanupModal);
+    </script>
 </body>
 </html>
 
