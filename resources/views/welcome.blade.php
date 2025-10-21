@@ -332,7 +332,7 @@
         <!-- Gallery Section -->
         @if($gallery->count() > 0)
             <section id="gallery" data-aos="fade-up">
-                <h3 class="display-3 fw-normal text-center">la nostra gallery</h3>
+                <h3 class="display-3 fw-normal text-center">Gallery</h3>
                 <p class="text-center col-lg-4 offset-lg-4 mb-5">Esplora le immagini delle nostre sistemazioni ben arredate, con servizi moderni e arredamento elegante progettato per rendere il vostro soggiorno indimenticabile.</p>
                 <div class="container position-relative">
                     <div class="row">
@@ -420,10 +420,10 @@
                 <div class="container-fluid padding-side" data-aos="fade-up">
                     <div class="d-flex flex-wrap align-items-center justify-content-between">
                         <div>
-                            <h3 class="display-3 fw-normal text-center">I nostri blog ed eventi</h3>
+                            <h3 class="display-3 fw-normal text-center">Blog ed eventi</h3>
                         </div>
                         <a href="{{ route('blog.index') }}" class="btn btn-arrow btn-primary mt-3">
-                            <span>Altri Blog<svg width="18" height="18">
+                            <span>Archivio Blog<svg width="18" height="18">
                                     <use xlink:href="#arrow-right"></use>
                                 </svg></span>
                         </a>
