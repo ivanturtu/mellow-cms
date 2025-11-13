@@ -141,11 +141,9 @@
             <div class="col-lg-4">
                 <div class="room-info bg-light p-4 rounded-4">
                     <h2 class="display-4 mb-3">{{ $room->name }}</h2>
-                    @if($room->price_per_night)
-                        <div class="price-display mb-4">
-                            <span class="h3 text-primary">${{ number_format($room->price_per_night, 2) }}/night</span>
-                        </div>
-                    @endif
+                    <div class="price-display mb-4">
+                        <span class="h3 text-primary">Prezzi su richiesta</span>
+                    </div>
 
                     <!-- Room Overview -->
                     <div class="room-overview mb-4">
@@ -194,23 +192,10 @@
                     </div>
 
                     <!-- Price Details -->
-                    @if($room->price_per_night)
-                        <div class="price-details mb-4">
-                            <h5 class="mb-3">Price Details</h5>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Per Night:</span>
-                                <span>${{ number_format($room->price_per_night, 2) }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Service Charge:</span>
-                                <span>$80</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Cleaning Fee:</span>
-                                <span>$50</span>
-                            </div>
-                        </div>
-                    @endif
+                    <div class="price-details mb-4">
+                        <h5 class="mb-3">Prezzi</h5>
+                        <p class="text-muted">Prezzi su richiesta</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -344,9 +329,7 @@
                                     <img src="{{ asset('storage/' . ltrim($relatedRoom->image, '/')) }}" class="card-img-top" alt="{{ $relatedRoom->name }}" style="height: 200px; object-fit: cover;">
                                     <div class="card-body">
                                         <h5 class="card-title">{{ $relatedRoom->name }}</h5>
-                                        @if($relatedRoom->price_per_night)
-                                            <p class="card-text text-primary">${{ number_format($relatedRoom->price_per_night, 2) }}/night</p>
-                                        @endif
+                                        <p class="card-text text-primary">Prezzi su richiesta</p>
                                         <a href="{{ route('room.details', $relatedRoom->slug) }}" class="btn btn-outline-primary">View Details</a>
                                     </div>
                                 </div>

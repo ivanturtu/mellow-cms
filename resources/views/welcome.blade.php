@@ -291,7 +291,7 @@
                                             <tbody>
                                                 <tr class="text-white">
                                                     <td class="pe-2">Prezzo:</td>
-                                                    <td class="price">€{{ $room->price }} /Notte</td>
+                                                    <td class="price">Prezzi su richiesta</td>
                                                 </tr>
                                                 <tr class="text-white">
                                                     <td class="pe-2">Dimensione:</td>
@@ -318,7 +318,7 @@
                                 </div>
                                 <div class="room-content text-center mt-3">
                                     <h4 class="display-6 fw-normal"><a href="{{ route('room.details', $room->slug) }}">{{ $room->name }}</a></h4>
-                                    <p><span class="text-primary fs-4">€{{ $room->price }}</span>/notte</p>
+                                    <p><span class="text-primary fs-4">Prezzi su richiesta</span></p>
                                 </div>
                             </div>
                         @endforeach
