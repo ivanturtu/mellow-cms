@@ -142,7 +142,13 @@
                 <div class="room-info bg-light p-4 rounded-4">
                     <h2 class="display-4 mb-3">{{ $room->name }}</h2>
                     <div class="price-display mb-4">
-                        <span class="h3 text-primary">Prezzi su richiesta</span>
+                        <span class="h3 text-primary">
+                            @if($room->show_price ?? true)
+                                €{{ number_format($room->price, 2) }}/notte
+                            @else
+                                Prezzi su richiesta
+                            @endif
+                        </span>
                     </div>
 
                     <!-- Room Overview -->
@@ -194,7 +200,14 @@
                     <!-- Price Details -->
                     <div class="price-details mb-4">
                         <h5 class="mb-3">Prezzi</h5>
-                        <p class="text-muted">Prezzi su richiesta</p>
+                        @if($room->show_price ?? true)
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Per Notte:</span>
+                                <span>€{{ number_format($room->price, 2) }}</span>
+                            </div>
+                        @else
+                            <p class="text-muted">Prezzi su richiesta</p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -329,7 +342,13 @@
                                     <img src="{{ asset('storage/' . ltrim($relatedRoom->image, '/')) }}" class="card-img-top" alt="{{ $relatedRoom->name }}" style="height: 200px; object-fit: cover;">
                                     <div class="card-body">
                                         <h5 class="card-title">{{ $relatedRoom->name }}</h5>
-                                        <p class="card-text text-primary">Prezzi su richiesta</p>
+                                        <p class="card-text text-primary">
+                                            @if($relatedRoom->show_price ?? true)
+                                                €{{ number_format($relatedRoom->price, 2) }}/notte
+                                            @else
+                                                Prezzi su richiesta
+                                            @endif
+                                        </p>
                                         <a href="{{ route('room.details', $relatedRoom->slug) }}" class="btn btn-outline-primary">View Details</a>
                                     </div>
                                 </div>

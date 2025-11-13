@@ -15,6 +15,7 @@ class Room extends Model
         'image_sizes',
         'price',
         'price_per_night',
+        'show_price',
         'size',
         'capacity',
         'bed_type',
@@ -38,6 +39,7 @@ class Room extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'show_price' => 'boolean',
         'price' => 'decimal:2',
         'price_per_night' => 'decimal:2',
         'wifi' => 'boolean',

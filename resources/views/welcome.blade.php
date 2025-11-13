@@ -291,7 +291,13 @@
                                             <tbody>
                                                 <tr class="text-white">
                                                     <td class="pe-2">Prezzo:</td>
-                                                    <td class="price">Prezzi su richiesta</td>
+                                                    <td class="price">
+                                                        @if($room->show_price ?? true)
+                                                            €{{ $room->price }} /Notte
+                                                        @else
+                                                            Prezzi su richiesta
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                                 <tr class="text-white">
                                                     <td class="pe-2">Dimensione:</td>
@@ -318,7 +324,15 @@
                                 </div>
                                 <div class="room-content text-center mt-3">
                                     <h4 class="display-6 fw-normal"><a href="{{ route('room.details', $room->slug) }}">{{ $room->name }}</a></h4>
-                                    <p><span class="text-primary fs-4">Prezzi su richiesta</span></p>
+                                    <p>
+                                        <span class="text-primary fs-4">
+                                            @if($room->show_price ?? true)
+                                                €{{ $room->price }}/notte
+                                            @else
+                                                Prezzi su richiesta
+                                            @endif
+                                        </span>
+                                    </p>
                                 </div>
                             </div>
                         @endforeach
@@ -627,6 +641,44 @@
 
         .blog-content-overlay svg {
             fill: #ffffff;
+        }
+
+        /* Uniform room boxes height */
+        .room-swiper .swiper-slide {
+            display: flex;
+            flex-direction: column;
+            height: auto;
+        }
+
+        .room-swiper .swiper-slide > div:first-child {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .room-item {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .room-item img.post-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .room-content {
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .room-item img.post-image {
+                height: 300px;
+            }
         }
         
         /* Hide mobile elements on larger screens */

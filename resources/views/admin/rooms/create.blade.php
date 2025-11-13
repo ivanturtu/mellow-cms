@@ -108,6 +108,13 @@
                                             Attiva
                                         </label>
                                     </div>
+                                    <div class="form-check mt-3">
+                                        <input class="form-check-input" type="checkbox" id="show_price" name="show_price" 
+                                               value="1" {{ old('show_price', true) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="show_price">
+                                            Mostra prezzo (se deselezionato, mostra "Prezzi su richiesta")
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

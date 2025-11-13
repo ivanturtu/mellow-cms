@@ -52,6 +52,7 @@ class RoomController extends Controller
         }
 
         $data['is_active'] = $request->has('is_active');
+        $data['show_price'] = $request->has('show_price');
 
         Room::create($data);
 
@@ -105,6 +106,7 @@ class RoomController extends Controller
         }
 
         $data['is_active'] = $request->has('is_active');
+        $data['show_price'] = $request->has('show_price');
 
         $room->update($data);
 
