@@ -440,13 +440,13 @@
                                                  srcset="{{ $blog->getResponsiveSrcset() }}"
                                                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw">
                                         </a>
-                                        <div class="position-absolute bottom-0 p-5">
+                                        <div class="position-absolute bottom-0 start-0 end-0 p-5 blog-content-overlay">
                                             <a href="#"><span class="bg-secondary text-body m-0 px-2 py-1 rounded-2 fs-6">{{ $blog->category ?? 'Blog' }}</span></a>
-                                            <h4 class="display-6 fw-normal mt-2"><a href="{{ route('blog.show', $blog->slug) }}">{{ $blog->title }}</a></h4>
+                                            <h4 class="display-6 fw-normal mt-2 text-white"><a href="{{ route('blog.show', $blog->slug) }}" class="text-white">{{ $blog->title }}</a></h4>
                                             @if($blog->excerpt)
-                                                <p class="text-white-50 small mt-2">{{ Str::limit($blog->excerpt, 80) }}</p>
+                                                <p class="text-white small mt-2">{{ Str::limit($blog->excerpt, 80) }}</p>
                                             @endif
-                                            <p class="m-0 align-items-center text-white-50"><svg width="19" height="19">
+                                            <p class="m-0 align-items-center text-white"><svg width="19" height="19" class="text-white">
                                                     <use xlink:href="#clock"></use>
                                                 </svg> {{ $blog->published_at->format('d M, Y') }}</p>
                                         </div>
@@ -605,6 +605,28 @@
                 width: 100%;
                 display: block;
             }
+        }
+
+        /* Blog content overlay for better text readability */
+        .blog-content-overlay {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0) 100%);
+            border-radius: 0 0 1.5rem 1.5rem;
+            z-index: 2;
+        }
+
+        .blog-content-overlay h4 a,
+        .blog-content-overlay h4 {
+            color: #ffffff !important;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .blog-content-overlay p {
+            color: #ffffff !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .blog-content-overlay svg {
+            fill: #ffffff;
         }
         
         /* Hide mobile elements on larger screens */
