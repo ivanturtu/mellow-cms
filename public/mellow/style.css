@@ -61,7 +61,7 @@ CSS STRUCTURE:
 /** 1. VARIABLES
 --------------------------------------------------------------*/
 :root {
-  --primary-color: #D16806;
+  --primary-color: #4379c2;
   --secondary-color: #F9F6F3;
   --black-color: #1A1A1A;
   --dark-color: #353535;
@@ -76,7 +76,7 @@ CSS STRUCTURE:
   --bs-gray-300: #DCDCDC;
   --bs-light-rgb: rgba(255, 255, 255, 1);
   --bs-body-color-rgb: 53, 53, 53;
-  --bs-primary-rgb: 209, 104, 6;
+  --bs-primary-rgb: 67, 121, 194;
   --bs-secondary-rgb: 249, 246, 243;
 }
 
@@ -112,6 +112,7 @@ body {
   letter-spacing: 0.32px;
   color: var(--dark-color);
   margin: 0;
+  background-color: #d8cbb8;
 }
 
 p {
@@ -900,7 +901,7 @@ svg.social:hover {
   margin: -75px 0 0 -75px;
   border-radius: 50%;
   border: 3px solid transparent;
-  border-top-color: #D16806;
+  border-top-color: #4379c2;
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
 }
