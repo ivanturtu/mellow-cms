@@ -36,11 +36,21 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="price" class="form-label">Prezzo per Notte (€) *</label>
-                                    <input type="number" step="0.01" class="form-control @error('price') is-invalid @enderror" 
-                                           id="price" name="price" value="{{ old('price', $room->price) }}" required>
+                                    <div class="input-group">
+                                        <input type="number" step="0.01" class="form-control @error('price') is-invalid @enderror" 
+                                               id="price" name="price" value="{{ old('price', $room->price) }}" required>
+                                        <span class="input-group-text bg-primary text-white">€</span>
+                                    </div>
                                     @error('price')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="show_price" name="show_price" 
+                                               value="1" {{ old('show_price', $room->show_price ?? true) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="show_price">
+                                            Mostra prezzo (se deselezionato, mostra "Prezzi su richiesta")
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -107,13 +117,6 @@
                                                value="1" {{ old('is_active', $room->is_active) ? 'checked' : '' }}>
                                         <label class="form-check-label" for="is_active">
                                             Attiva
-                                        </label>
-                                    </div>
-                                    <div class="form-check mt-3">
-                                        <input class="form-check-input" type="checkbox" id="show_price" name="show_price" 
-                                               value="1" {{ old('show_price', $room->show_price ?? true) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="show_price">
-                                            Mostra prezzo (se deselezionato, mostra "Prezzi su richiesta")
                                         </label>
                                     </div>
                                 </div>

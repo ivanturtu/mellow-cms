@@ -77,6 +77,12 @@
                                             <input type="number" wire:model="price" class="form-control @error('price') is-invalid @enderror" 
                                                    id="price" step="0.01" min="0" required>
                                             @error('price') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                            <div class="form-check mt-2">
+                                                <input class="form-check-input" type="checkbox" wire:model="show_price" id="show_price">
+                                                <label class="form-check-label" for="show_price">
+                                                    Mostra prezzo (se deselezionato, mostra "Prezzi su richiesta")
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">

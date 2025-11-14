@@ -30,6 +30,7 @@ class RoomManagement extends Component
     public $air_conditioning = false;
     public $tv_cable = false;
     public $services = '';
+    public $show_price = true;
     public $is_active = true;
     public $sort_order = 0;
 
@@ -116,6 +117,7 @@ class RoomManagement extends Component
         $this->air_conditioning = (bool) $room->air_conditioning;
         $this->tv_cable = (bool) $room->tv_cable;
         $this->services = $room->services;
+        $this->show_price = $room->show_price ?? true;
         $this->is_active = $room->is_active;
         $this->sort_order = $room->sort_order;
         $this->showForm = true;
@@ -146,6 +148,7 @@ class RoomManagement extends Component
             'air_conditioning' => $this->air_conditioning,
             'tv_cable' => $this->tv_cable,
             'services' => $this->services,
+            'show_price' => $this->show_price,
             'is_active' => $this->is_active,
             'sort_order' => $this->sort_order,
         ];
@@ -234,6 +237,7 @@ class RoomManagement extends Component
         $this->air_conditioning = false;
         $this->tv_cable = false;
         $this->services = '';
+        $this->show_price = true;
         $this->is_active = true;
         $this->sort_order = 0;
         $this->editingRoom = null;
