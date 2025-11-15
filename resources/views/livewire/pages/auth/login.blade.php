@@ -31,7 +31,7 @@ new #[Layout('layouts.auth')] class extends Component
         <!-- Email Address -->
         <div class="mb-3">
             <label for="email" class="form-label">{{ __('Email') }}</label>
-            <input wire:model.blur="form.email" 
+            <input wire:model="form.email" 
                    id="email" 
                    class="form-control @error('form.email') is-invalid @enderror" 
                    type="email" 
@@ -48,7 +48,7 @@ new #[Layout('layouts.auth')] class extends Component
         <!-- Password -->
         <div class="mb-3">
             <label for="password" class="form-label">{{ __('Password') }}</label>
-            <input wire:model.blur="form.password" 
+            <input wire:model="form.password" 
                    id="password" 
                    class="form-control @error('form.password') is-invalid @enderror"
                    type="password"

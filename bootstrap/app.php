@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\MaintenanceMode::class,
             \App\Http\Middleware\SeoMiddleware::class,
         ]);
+        
+        // Register RedirectIfAuthenticated middleware for guest routes
+        $middleware->alias([
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
