@@ -122,37 +122,43 @@
         <div class="d-flex flex-wrap justify-content-between align-items-center">
           <ul class="info d-flex flex-wrap list-unstyled m-0">
             <li class="location text-capitalize d-flex align-items-center me-4 small">
-              <svg class="color me-1" width="15" height="15">
-                <use xlink:href="#location"></use>
-              </svg>
               @php
                 $address = \App\Models\Setting::where('group', 'general')->where('key', 'contact_address')->first();
                 $addressValue = $address ? $address->value : 'Via della Serenità, 123 - 00100 Roma';
                 $googleMapsUrl = 'https://www.google.com/maps/search/' . urlencode($addressValue);
               @endphp
-              <a href="{{ $googleMapsUrl }}" target="_blank" class="text-decoration-none text-body">Google Maps</a>
+              <a href="{{ $googleMapsUrl }}" target="_blank" class="text-decoration-none text-body d-flex align-items-center">
+                <svg class="color me-1" width="15" height="15">
+                  <use xlink:href="#location"></use>
+                </svg>
+                <span class="header-top-text">Google Maps</span>
+              </a>
             </li>
             <li class="text-capitalize ms-4 small">
-              <svg class="color me-1" width="15" height="15">
-                <use xlink:href="#phone"></use>
-              </svg>
               @php
                 $phone = \App\Models\Setting::where('group', 'general')->where('key', 'contact_phone')->first();
                 $phoneValue = $phone ? $phone->value : '+39 123 456 7890';
                 $phoneUrl = 'tel:' . str_replace(' ', '', $phoneValue);
               @endphp
-              <a href="{{ $phoneUrl }}" class="text-decoration-none text-body">{{ $phoneValue }}</a>
+              <a href="{{ $phoneUrl }}" class="text-decoration-none text-body d-flex align-items-center">
+                <svg class="color me-1" width="15" height="15">
+                  <use xlink:href="#phone"></use>
+                </svg>
+                <span class="header-top-text">{{ $phoneValue }}</span>
+              </a>
             </li>
             <li class="text-capitalize ms-4 small">
-              <svg class="color me-1" width="15" height="15">
-                <use xlink:href="#email"></use>
-              </svg>
               @php
                 $email = \App\Models\Setting::where('group', 'general')->where('key', 'contact_email')->first();
                 $emailValue = $email ? $email->value : 'info@hotelmellow.com';
                 $emailUrl = 'mailto:' . $emailValue;
               @endphp
-              <a href="{{ $emailUrl }}" class="text-decoration-none text-body">{{ $emailValue }}</a>
+              <a href="{{ $emailUrl }}" class="text-decoration-none text-body d-flex align-items-center">
+                <svg class="color me-1" width="15" height="15">
+                  <use xlink:href="#email"></use>
+                </svg>
+                <span class="header-top-text">{{ $emailValue }}</span>
+              </a>
             </li>
           </ul>
           <ul class="social d-flex flex-wrap list-unstyled m-0">
@@ -478,6 +484,37 @@
     
     .social a:hover i, .social-links a:hover i {
       color: var(--primary-color, #667eea) !important;
+    }
+    
+    /* Hide header-top text on mobile, show only icons */
+    @media (max-width: 767.98px) {
+      .header-top .header-top-text {
+        display: none !important;
+      }
+      
+      .header-top .info li {
+        margin-right: 0.5rem !important;
+        margin-left: 0.5rem !important;
+      }
+      
+      .header-top .info li a {
+        margin-right: 0 !important;
+      }
+      
+      .header-top .info li a svg {
+        margin-right: 0 !important;
+        width: 20px !important;
+        height: 20px !important;
+      }
+      
+      .header-top .social li svg {
+        width: 20px !important;
+        height: 20px !important;
+      }
+      
+      .header-top .social li {
+        margin-left: 0.75rem !important;
+      }
     }
   </style>
   
