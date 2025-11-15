@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="format-detection" content="telephone=no">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   
   <!-- SEO Meta Tags -->
   <x-seo-meta :page="$page ?? 'home'" :data="$seoData ?? []" />
@@ -540,54 +541,15 @@
   </div>
 
   <!-- Booking Form JavaScript -->
+  <!-- Note: Form handling is done in welcome.blade.php and room-details.blade.php -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Gestione del form di prenotazione
-      const bookingForm = document.getElementById('check_available');
-      if (bookingForm) {
-        bookingForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          const formData = new FormData(bookingForm);
-          const submitButton = bookingForm.querySelector('button[type="submit"]');
-          const originalText = submitButton.innerHTML;
-          
-          // Disabilita il pulsante e mostra loading
-          submitButton.disabled = true;
-          submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Invio in corso...';
-          
-          // Invia i dati al server
-          fetch('{{ route("booking.request") }}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              showModal('success', 'Richiesta Inviata!', data.message);
-              bookingForm.reset();
-            } else {
-              showModal('error', 'Errore', data.message || 'Errore durante l\'invio della richiesta');
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            showModal('error', 'Errore', 'Errore durante l\'invio della richiesta. Riprova più tardi.');
-          })
-          .finally(() => {
-            // Riabilita il pulsante
-            submitButton.disabled = false;
-            submitButton.innerHTML = originalText;
-          });
-        });
-      }
-
-      // Funzione per mostrare il modal personalizzato
-      function showModal(type, title, message) {
-        const modal = new bootstrap.Modal(document.getElementById('bookingModal'));
+      // Funzione globale per mostrare il modal personalizzato (usata dalle pagine che gestiscono i form)
+      window.showBookingModal = function(type, title, message) {
+        const modalElement = document.getElementById('bookingModal');
+        if (!modalElement) return;
+        
+        const modal = new bootstrap.Modal(modalElement);
         const modalIcon = document.getElementById('modalIcon');
         const modalTitle = document.getElementById('modalTitle');
         const modalMessage = document.getElementById('modalMessage');
@@ -605,6 +567,18 @@
         modalMessage.textContent = message;
         modal.show();
         
+        // Clean up overlay when modal is hidden
+        modalElement.addEventListener('hidden.bs.modal', function() {
+          // Remove any lingering backdrop
+          const backdrop = document.querySelector('.modal-backdrop');
+          if (backdrop) {
+            backdrop.remove();
+          }
+          // Remove modal-open class from body
+          document.body.classList.remove('modal-open');
+          document.body.style.overflow = '';
+        }, { once: true });
+        
         // Force FontAwesome icons to render
         setTimeout(() => {
           const icons = modalIcon.querySelectorAll('i');
@@ -618,7 +592,7 @@
             icon.style.lineHeight = '1';
           });
         }, 100);
-      }
+      };
     });
   </script>
 </body>

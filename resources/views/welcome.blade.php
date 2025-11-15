@@ -742,16 +742,22 @@
                 submitButton.disabled = true;
                 submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Invio...';
                 
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+                
                 fetch('{{ route("booking.request") }}', {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        'X-CSRF-TOKEN': csrfToken
                     }
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        // Close mobile panel if open
+                        if (mobileBookingPanel && mobileBookingPanel.classList.contains('show')) {
+                            closeMobilePanel();
+                        }
                         showModal('success', 'Successo', 'Richiesta inviata con successo! Ti contatteremo presto.');
                         form.reset();
                     } else {
@@ -769,9 +775,17 @@
                 });
             }
             
-            // Function to show modal
+            // Function to show modal - use global function if available, otherwise define locally
             function showModal(type, title, message) {
-                const modal = new bootstrap.Modal(document.getElementById('bookingModal'));
+                if (window.showBookingModal) {
+                    window.showBookingModal(type, title, message);
+                    return;
+                }
+                
+                const modalElement = document.getElementById('bookingModal');
+                if (!modalElement) return;
+                
+                const modal = new bootstrap.Modal(modalElement);
                 const modalIcon = document.getElementById('modalIcon');
                 const modalTitle = document.getElementById('modalTitle');
                 const modalMessage = document.getElementById('modalMessage');
@@ -788,6 +802,18 @@
                 
                 modalMessage.textContent = message;
                 modal.show();
+                
+                // Clean up overlay when modal is hidden
+                modalElement.addEventListener('hidden.bs.modal', function() {
+                    // Remove any lingering backdrop
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) {
+                        backdrop.remove();
+                    }
+                    // Remove modal-open class from body
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                }, { once: true });
             }
         });
     </script>

@@ -60,9 +60,15 @@ class ContactController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('ContactForm: Store failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Errore durante l\'invio del messaggio. Riprova più tardi.'
+                'message' => 'Errore durante l\'invio del messaggio. Riprova più tardi.',
+                'error' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
     }
@@ -72,21 +78,43 @@ class ContactController extends Controller
      */
     private function sendContactEmail($data)
     {
-        $settings = Setting::getGroupedSettings();
-        $hotelName = $settings['general']['hotel_name'] ?? 'Hotel Mellow';
-        $contactEmail = $settings['general']['contact_email'] ?? 'ivanturturiello@gmail.com';
+        try {
+            $settings = Setting::getGroupedSettings();
+            $hotelName = $settings['general']['hotel_name'] ?? 'Hotel Mellow';
+            $contactEmail = $settings['general']['contact_email'] ?? 'ivanturturiello@gmail.com';
 
-        $fromEmail = $contactEmail ?? env('MAIL_FROM_ADDRESS', 'noreply@example.com');
-        $fromName = $hotelName;
-        
-        Mail::send('emails.contact-notification', [
-            'data' => $data,
-            'hotelName' => $hotelName,
-            'settings' => $settings
-        ], function ($message) use ($data, $hotelName, $contactEmail, $fromEmail, $fromName) {
-            $message->from($fromEmail, $fromName)
-                ->to($contactEmail)
-                ->subject('Nuovo messaggio di contatto - ' . $hotelName);
-        });
+            \Log::info('ContactForm: Attempting to send email', [
+                'contact_email' => $contactEmail,
+                'hotel_name' => $hotelName,
+                'mail_mailer' => config('mail.default'),
+                'mail_host' => config('mail.mailers.smtp.host'),
+            ]);
+
+            // Use MAIL_FROM_ADDRESS as sender (must be authorized by SMTP server)
+            $fromEmail = env('MAIL_FROM_ADDRESS', config('mail.from.address', 'noreply@example.com'));
+            $fromName = $hotelName;
+            
+            Mail::send('emails.contact-notification', [
+                'data' => $data,
+                'hotelName' => $hotelName,
+                'settings' => $settings
+            ], function ($message) use ($data, $hotelName, $contactEmail, $fromEmail, $fromName) {
+                $message->from($fromEmail, $fromName)
+                    ->to($contactEmail)
+                    ->subject('Nuovo messaggio di contatto - ' . $hotelName);
+            });
+            
+            \Log::info('ContactForm: Email sent successfully', [
+                'to' => $contactEmail,
+                'from' => $fromEmail
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('ContactForm: Email sending failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 }

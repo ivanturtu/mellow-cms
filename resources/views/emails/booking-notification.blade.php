@@ -14,11 +14,26 @@
             padding: 20px;
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
+            background: linear-gradient(135deg, #d8cbb8 0%, #c4b5a0 50%, #b8a892 100%);
+            color: #353535;
+            padding: 30px 20px;
             text-align: center;
             border-radius: 8px 8px 0 0;
+        }
+        .header-logo {
+            max-height: 80px;
+            max-width: 200px;
+            margin-bottom: 15px;
+        }
+        .header h1 {
+            color: #353535;
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            color: #555;
+            margin: 10px 0 0 0;
+            font-size: 16px;
         }
         .content {
             background: #f8f9fa;
@@ -59,7 +74,20 @@
 </head>
 <body>
     <div class="header">
-        <h1>🏨 Nuova Richiesta di Prenotazione</h1>
+        @php
+            $logo = \App\Models\Setting::where('group', 'general')->where('key', 'logo')->first();
+            if ($logo && $logo->value) {
+                $logoPath = str_starts_with($logo->value, 'mellow/') 
+                    ? url($logo->value) 
+                    : url('storage/' . $logo->value);
+            } else {
+                $logoPath = url('mellow/images/main-logo.png');
+            }
+        @endphp
+        @if($logoPath)
+            <img src="{{ $logoPath }}" alt="{{ $hotelName }}" class="header-logo">
+        @endif
+        <h1>Nuova Richiesta di Prenotazione</h1>
         <p>{{ $hotelName }}</p>
     </div>
     

@@ -50,31 +50,60 @@ class BookingRequestController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('BookingRequest: Store failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Errore durante l\'invio della richiesta. Riprova più tardi.'
+                'message' => 'Errore durante l\'invio della richiesta. Riprova più tardi.',
+                'error' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
     }
 
     private function sendNotificationEmail($bookingRequest)
     {
-        $settings = \App\Models\Setting::getGroupedSettings();
-        $hotelName = $settings['general']['hotel_name'] ?? 'Hotel Mellow';
-        $contactEmail = $settings['general']['contact_email'] ?? 'ivanturturiello@gmail.com';
-        
-        $data = [
-            'bookingRequest' => $bookingRequest,
-            'hotelName' => $hotelName
-        ];
+        try {
+            $settings = \App\Models\Setting::getGroupedSettings();
+            $hotelName = $settings['general']['hotel_name'] ?? 'Hotel Mellow';
+            $contactEmail = $settings['general']['contact_email'] ?? 'ivanturturiello@gmail.com';
+            
+            \Log::info('BookingRequest: Attempting to send email', [
+                'contact_email' => $contactEmail,
+                'hotel_name' => $hotelName,
+                'booking_id' => $bookingRequest->id,
+                'mail_mailer' => config('mail.default'),
+                'mail_host' => config('mail.mailers.smtp.host'),
+            ]);
+            
+            $data = [
+                'bookingRequest' => $bookingRequest,
+                'hotelName' => $hotelName
+            ];
 
-        $fromEmail = $contactEmail ?? env('MAIL_FROM_ADDRESS', 'noreply@example.com');
-        $fromName = $hotelName;
-        
-        Mail::send('emails.booking-notification', $data, function ($message) use ($contactEmail, $hotelName, $fromEmail, $fromName) {
-            $message->from($fromEmail, $fromName)
-                   ->to($contactEmail)
-                   ->subject('Nuova Richiesta di Prenotazione - ' . $hotelName);
-        });
+            // Use MAIL_FROM_ADDRESS as sender (must be authorized by SMTP server)
+            $fromEmail = env('MAIL_FROM_ADDRESS', config('mail.from.address', 'noreply@example.com'));
+            $fromName = $hotelName;
+            
+            Mail::send('emails.booking-notification', $data, function ($message) use ($contactEmail, $hotelName, $fromEmail, $fromName) {
+                $message->from($fromEmail, $fromName)
+                       ->to($contactEmail)
+                       ->subject('Nuova Richiesta di Prenotazione - ' . $hotelName);
+            });
+            
+            \Log::info('BookingRequest: Email sent successfully', [
+                'to' => $contactEmail,
+                'from' => $fromEmail
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('BookingRequest: Email sending failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 }
