@@ -293,7 +293,8 @@
             <div class="col-12">
                 <div class="reservation-form bg-secondary p-4 rounded-4">
                     <h3 class="display-5 mb-4">Richiesta disponibilità</h3>
-                    <form id="check_available" class="form-group flex-wrap">
+                    <form id="check_available" class="form-group flex-wrap" method="POST" action="{{ route('booking.request') }}">
+                        @csrf
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label text-uppercase small">Check-In</label>
@@ -365,5 +366,114 @@
 function changeMainImage(imageSrc, imageAlt) {
     // legacy helper no longer used with Swiper, kept for backward safety
 }
+
+// Handle booking form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const bookingForm = document.getElementById('check_available');
+    
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Invio...';
+            
+            // Get CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+            
+            // Send AJAX request
+            fetch('{{ route("booking.request") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showModal('success', 'Successo', 'Richiesta inviata con successo! Ti contatteremo presto.');
+                    form.reset();
+                } else {
+                    showModal('error', 'Errore', data.message || 'Errore durante l\'invio della richiesta.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showModal('error', 'Errore', 'Errore durante l\'invio della richiesta. Riprova più tardi.');
+            })
+            .finally(() => {
+                // Reset button
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+            });
+        });
+    }
+    
+    // Function to show modal - use global function if available, otherwise define locally
+    function showModal(type, title, message) {
+        if (window.showBookingModal) {
+            window.showBookingModal(type, title, message);
+            return;
+        }
+        
+        const modalElement = document.getElementById('bookingModal');
+        if (!modalElement) {
+            // Fallback to alert if modal doesn't exist
+            alert(`${title}: ${message}`);
+            return;
+        }
+        
+        const modal = new bootstrap.Modal(modalElement);
+        const modalIcon = document.getElementById('modalIcon');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        
+        if (type === 'success') {
+            modalIcon.innerHTML = '<i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>';
+            modalTitle.textContent = title;
+            modalTitle.className = 'mb-3 text-success';
+        } else {
+            modalIcon.innerHTML = '<i class="fas fa-exclamation-triangle text-danger" style="font-size: 3rem;"></i>';
+            modalTitle.textContent = title;
+            modalTitle.className = 'mb-3 text-danger';
+        }
+        
+        modalMessage.textContent = message;
+        modal.show();
+        
+        // Clean up overlay when modal is hidden
+        modalElement.addEventListener('hidden.bs.modal', function() {
+            // Remove any lingering backdrop
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+            // Remove modal-open class from body
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+        }, { once: true });
+        
+        // Force FontAwesome icons to render
+        setTimeout(() => {
+            const icons = modalIcon.querySelectorAll('i');
+            icons.forEach(icon => {
+                icon.style.fontFamily = '"Font Awesome 6 Free"';
+                icon.style.fontWeight = '900';
+                icon.style.display = 'inline-block';
+                icon.style.fontStyle = 'normal';
+                icon.style.fontVariant = 'normal';
+                icon.style.textRendering = 'auto';
+                icon.style.lineHeight = '1';
+            });
+        }, 100);
+    }
+});
 </script>
 @endsection

@@ -31,7 +31,7 @@
                         <h3 class="display-6 fw-normal mb-4">Hai domande?</h3>
                         <p class="text-muted mb-4">Utilizza il modulo qui sotto per metterti in contatto con noi.</p>
                         
-                        <form id="contactForm" method="POST" action="{{ route('contact.store') }}">
+                        <form id="contactForm" onsubmit="return false;">
                             @csrf
                             <div class="row g-4">
                                 <div class="col-md-6">
@@ -327,70 +327,114 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
-    const submitButton = contactForm.querySelector('button[type="submit"]');
-    const submitSpinner = document.getElementById('submitSpinner');
-    const submitText = document.getElementById('submitText');
-
-    contactForm.addEventListener('submit', function(e) {
+    
+    if (!contactForm) {
+        return;
+    }
+    
+    // Remove onsubmit attribute and handle with JavaScript
+    contactForm.removeAttribute('onsubmit');
+    
+    contactForm.addEventListener('submit', handleContactSubmit);
+    
+    function handleContactSubmit(e) {
         e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        const form = e.target;
+        const formData = new FormData(form);
         
         // Show loading state
+        const submitButton = form.querySelector('button[type="submit"]');
+        const submitSpinner = document.getElementById('submitSpinner');
+        const submitText = document.getElementById('submitText');
+        const originalText = submitButton.innerHTML;
+        
         submitButton.disabled = true;
-        submitSpinner.classList.remove('d-none');
-        submitText.textContent = 'Invio in corso...';
+        if (submitSpinner) {
+            submitSpinner.classList.remove('d-none');
+        }
+        if (submitText) {
+            submitText.textContent = 'Invio in corso...';
+        } else {
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Invio...';
+        }
         
-        // Get form data
-        const formData = new FormData(contactForm);
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
         
-        // Send AJAX request
-        fetch(contactForm.action, {
+        fetch('{{ route("contact.store") }}', {
             method: 'POST',
             body: formData,
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                'X-CSRF-TOKEN': csrfToken
             }
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Show success message
-                showAlert('success', 'Messaggio inviato!', data.message);
-                contactForm.reset();
+                showModal('success', 'Messaggio Inviato!', data.message || 'Messaggio inviato con successo! Ti risponderemo presto.');
+                form.reset();
             } else {
-                // Show error message
-                showAlert('error', 'Errore', data.message || 'Errore durante l\'invio del messaggio');
+                showModal('error', 'Errore', data.message || 'Errore durante l\'invio del messaggio.');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            showAlert('error', 'Errore', 'Errore durante l\'invio del messaggio. Riprova più tardi.');
+            showModal('error', 'Errore', 'Errore durante l\'invio del messaggio. Riprova più tardi.');
         })
         .finally(() => {
-            // Reset button state
+            // Reset button
             submitButton.disabled = false;
-            submitSpinner.classList.add('d-none');
-            submitText.textContent = 'Invia Messaggio';
-        });
-    });
-    
-    function showAlert(type, title, message) {
-        // Create alert element
-        const alertDiv = document.createElement('div');
-        alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
-        alertDiv.innerHTML = `
-            <strong>${title}</strong> ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        
-        // Insert at the top of the form
-        contactForm.insertBefore(alertDiv, contactForm.firstChild);
-        
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-            if (alertDiv.parentNode) {
-                alertDiv.remove();
+            if (submitSpinner) {
+                submitSpinner.classList.add('d-none');
             }
-        }, 5000);
+            if (submitText) {
+                submitText.textContent = 'Invia Messaggio';
+            } else {
+                submitButton.innerHTML = originalText;
+            }
+        });
+    }
+    
+    // Function to show modal - use global function if available, otherwise define locally
+    function showModal(type, title, message) {
+        if (window.showBookingModal) {
+            window.showBookingModal(type, title, message);
+            return;
+        }
+        
+        const modalElement = document.getElementById('bookingModal');
+        if (!modalElement) return;
+        
+        const modal = new bootstrap.Modal(modalElement);
+        const modalIcon = document.getElementById('modalIcon');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        
+        if (type === 'success') {
+            modalIcon.innerHTML = '<i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>';
+            modalTitle.textContent = title;
+            modalTitle.className = 'mb-3 text-success';
+        } else {
+            modalIcon.innerHTML = '<i class="fas fa-exclamation-triangle text-danger" style="font-size: 3rem;"></i>';
+            modalTitle.textContent = title;
+            modalTitle.className = 'mb-3 text-danger';
+        }
+        
+        modalMessage.textContent = message;
+        modal.show();
+        
+        // Clean up overlay when modal is hidden
+        modalElement.addEventListener('hidden.bs.modal', function() {
+            // Remove any lingering backdrop
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+            // Remove modal-open class from body
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+        }, { once: true });
     }
 });
 </script>
