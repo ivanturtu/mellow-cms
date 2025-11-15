@@ -107,6 +107,9 @@
             <a class="nav-link {{ request()->routeIs('admin.contact-messages') ? 'active' : '' }}" href="{{ route('admin.contact-messages') }}">
                 <i class="fas fa-envelope me-2"></i> Messaggi
             </a>
+            <a class="nav-link {{ request()->routeIs('admin.seo') ? 'active' : '' }}" href="{{ route('admin.seo') }}">
+                <i class="fas fa-search me-2"></i> SEO
+            </a>
             <a class="nav-link {{ request()->routeIs('admin.settings') ? 'active' : '' }}" href="{{ route('admin.settings') }}">
                 <i class="fas fa-cog me-2"></i> Impostazioni
             </a>

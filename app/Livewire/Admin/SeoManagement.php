@@ -7,7 +7,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Cache;
 
-#[Layout('layouts.admin')]
+#[Layout('components.layouts.admin')]
 class SeoManagement extends Component
 {
     // General SEO Settings
