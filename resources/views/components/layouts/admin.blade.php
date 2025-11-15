@@ -22,12 +22,29 @@
     
     <!-- Additional Admin Styles -->
     <style>
-        .sidebar {
+        html, body {
+            height: 100%;
+        }
+        .container-fluid {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .row {
+            width: 100%;
+            margin: 0;
+            display: flex;
+            align-items: stretch;
+        }
+        .sidebar-col {
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar {
+            flex: 1;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #d8cbb8 0%, #c4b5a0 50%, #b8a892 100%);
         }
         .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(53, 53, 53, 0.9);
             padding: 0.75rem 1rem;
             border-radius: 0.5rem;
             margin: 0.25rem 0;
@@ -35,8 +52,8 @@
         }
         .sidebar .nav-link:hover,
         .sidebar .nav-link.active {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.1);
+            color: #353535;
+            background-color: rgba(255, 255, 255, 0.3);
         }
         .admin-header {
             background: white;
@@ -52,11 +69,11 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 px-0">
+            <div class="col-md-3 col-lg-2 px-0 sidebar-col">
                 <div class="sidebar p-3">
                     <div class="text-center mb-4">
-                        <h4 class="text-white">Mellow CMS</h4>
-                        <small class="text-white-50">Admin Panel</small>
+                        <h4 class="text-dark">SuperHost CMS</h4>
+                        <small class="text-muted">Admin Panel</small>
                     </div>
                     
                     <nav class="nav flex-column">
@@ -93,7 +110,7 @@
             <a class="nav-link {{ request()->routeIs('admin.settings') ? 'active' : '' }}" href="{{ route('admin.settings') }}">
                 <i class="fas fa-cog me-2"></i> Impostazioni
             </a>
-                        <hr class="text-white-50">
+                        <hr class="text-dark" style="opacity: 0.2;">
                         <a class="nav-link" href="{{ route('home') }}" target="_blank">
                             <i class="fas fa-external-link-alt me-2"></i> Vedi Sito
                         </a>

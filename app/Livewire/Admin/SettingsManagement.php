@@ -38,6 +38,15 @@ class SettingsManagement extends Component
         $this->id = uniqid();
         $this->loadSettings();
         $this->currentLogo = $this->getSetting('general', 'logo', '');
+        
+        // Initialize maintenance mode settings if they don't exist
+        if (!isset($this->settings['maintenance']['maintenance_enabled'])) {
+            $maintenanceEnabled = Setting::get('maintenance_enabled', '0');
+            $this->settings['maintenance']['maintenance_enabled'] = $maintenanceEnabled === '1' ? '1' : '0';
+        }
+        if (!isset($this->settings['maintenance']['maintenance_message'])) {
+            $this->settings['maintenance']['maintenance_message'] = Setting::get('maintenance_message', 'Stiamo lavorando per migliorare il sito. Torneremo presto online!');
+        }
     }
 
     public function render()
@@ -241,6 +250,29 @@ class SettingsManagement extends Component
         }
         
         session()->flash('success', 'Impostazioni contatti salvate con successo!');
+    }
+
+    public function saveMaintenanceSettings()
+    {
+        // Save maintenance mode settings
+        // Handle checkbox value - it can be true, '1', false, null, or '0'
+        $enabledValue = $this->settings['maintenance']['maintenance_enabled'] ?? '0';
+        $enabled = ($enabledValue === true || $enabledValue === '1' || $enabledValue === 1) ? '1' : '0';
+        
+        Setting::set('maintenance_enabled', $enabled, 'text', 'maintenance');
+        
+        if (isset($this->settings['maintenance']['maintenance_message'])) {
+            Setting::set('maintenance_message', $this->settings['maintenance']['maintenance_message'], 'textarea', 'maintenance');
+        }
+        
+        $status = $enabled === '1' ? 'attivata' : 'disattivata';
+        session()->flash('success', "Modalità manutenzione {$status} con successo!");
+        
+        // Reload settings to reflect changes
+        $this->loadSettings();
+        
+        // Ensure the checkbox value is set correctly after reload
+        $this->settings['maintenance']['maintenance_enabled'] = $enabled;
     }
 
 }

@@ -224,6 +224,60 @@
         </div>
     </div>
 
+    <!-- Maintenance Mode Section -->
+    <div class="card mb-4 border-warning">
+        <div class="card-header bg-warning bg-opacity-10">
+            <h5 class="mb-0">
+                <i class="fas fa-tools me-2"></i>Modalità Manutenzione
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Quando la modalità manutenzione è attiva, gli utenti non autenticati vedranno una pagina di manutenzione. 
+                Gli amministratori possono comunque accedere al pannello di controllo.
+            </div>
+            
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               id="maintenance_enabled"
+                               wire:model.live="settings.maintenance.maintenance_enabled"
+                               value="1">
+                        <label class="form-check-label" for="maintenance_enabled">
+                            <strong>Attiva modalità manutenzione</strong>
+                        </label>
+                    </div>
+                    <small class="form-text text-muted">
+                        Attiva questa opzione per mettere il sito in manutenzione
+                    </small>
+                </div>
+                
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="maintenance_message" class="form-label">Messaggio di Manutenzione</label>
+                        <textarea wire:model.lazy="settings.maintenance.maintenance_message" 
+                                  class="form-control" 
+                                  id="maintenance_message"
+                                  rows="4" 
+                                  placeholder="Stiamo lavorando per migliorare il sito. Torneremo presto online!"></textarea>
+                        <small class="form-text text-muted">
+                            Questo messaggio verrà mostrato agli utenti quando il sito è in manutenzione
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-end">
+                <button type="button" wire:click="saveMaintenanceSettings" class="btn btn-warning">
+                    <i class="fas fa-save me-2"></i>Salva Impostazioni Manutenzione
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Mailchimp Newsletter Section -->
     <div class="card mb-4">
         <div class="card-header">
@@ -307,7 +361,7 @@
     <!-- Settings Groups -->
     @if(count($settings) > 0)
         @foreach($settings as $group => $groupSettings)
-            @if($group !== 'mailchimp' && $group !== 'social' && $group !== 'general' && $group !== 'contact')
+            @if($group !== 'mailchimp' && $group !== 'social' && $group !== 'general' && $group !== 'contact' && $group !== 'maintenance')
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="mb-0 text-capitalize">{{ $group }}</h5>
