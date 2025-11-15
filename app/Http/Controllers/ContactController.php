@@ -76,12 +76,16 @@ class ContactController extends Controller
         $hotelName = $settings['general']['hotel_name'] ?? 'Hotel Mellow';
         $contactEmail = $settings['general']['contact_email'] ?? 'ivanturturiello@gmail.com';
 
+        $fromEmail = $contactEmail ?? env('MAIL_FROM_ADDRESS', 'noreply@example.com');
+        $fromName = $hotelName;
+        
         Mail::send('emails.contact-notification', [
             'data' => $data,
             'hotelName' => $hotelName,
             'settings' => $settings
-        ], function ($message) use ($data, $hotelName, $contactEmail) {
-            $message->to($contactEmail)
+        ], function ($message) use ($data, $hotelName, $contactEmail, $fromEmail, $fromName) {
+            $message->from($fromEmail, $fromName)
+                ->to($contactEmail)
                 ->subject('Nuovo messaggio di contatto - ' . $hotelName);
         });
     }

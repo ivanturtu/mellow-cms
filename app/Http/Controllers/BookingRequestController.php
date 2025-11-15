@@ -59,14 +59,22 @@ class BookingRequestController extends Controller
 
     private function sendNotificationEmail($bookingRequest)
     {
+        $settings = \App\Models\Setting::getGroupedSettings();
+        $hotelName = $settings['general']['hotel_name'] ?? 'Hotel Mellow';
+        $contactEmail = $settings['general']['contact_email'] ?? 'ivanturturiello@gmail.com';
+        
         $data = [
             'bookingRequest' => $bookingRequest,
-            'hotelName' => \App\Models\Setting::where('group', 'general')->where('key', 'hotel_name')->first()?->value ?? 'Hotel Mellow'
+            'hotelName' => $hotelName
         ];
 
-        Mail::send('emails.booking-notification', $data, function ($message) {
-            $message->to('ivanturturiello@gmail.com')
-                   ->subject('Nuova Richiesta di Prenotazione');
+        $fromEmail = $contactEmail ?? env('MAIL_FROM_ADDRESS', 'noreply@example.com');
+        $fromName = $hotelName;
+        
+        Mail::send('emails.booking-notification', $data, function ($message) use ($contactEmail, $hotelName, $fromEmail, $fromName) {
+            $message->from($fromEmail, $fromName)
+                   ->to($contactEmail)
+                   ->subject('Nuova Richiesta di Prenotazione - ' . $hotelName);
         });
     }
 }
