@@ -361,7 +361,7 @@
     <!-- Settings Groups -->
     @if(count($settings) > 0)
         @foreach($settings as $group => $groupSettings)
-            @if($group !== 'mailchimp' && $group !== 'social' && $group !== 'general' && $group !== 'contact' && $group !== 'maintenance')
+            @if($group !== 'mailchimp' && $group !== 'social' && $group !== 'general' && $group !== 'contact' && $group !== 'maintenance' && $group !== 'seo')
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="mb-0 text-capitalize">{{ $group }}</h5>
@@ -422,10 +422,12 @@
                                 <option value="general">Generale</option>
                                 <option value="contact">Contatti</option>
                                 <option value="social">Social</option>
-                                <option value="seo">SEO</option>
                                 <option value="email">Email</option>
                                 <option value="payment">Pagamenti</option>
                             </select>
+                            <small class="form-text text-muted">
+                                Nota: Le impostazioni SEO sono gestite nella sezione dedicata <a href="{{ route('admin.seo') }}">Gestione SEO</a>
+                            </small>
                             @error('newGroup') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
