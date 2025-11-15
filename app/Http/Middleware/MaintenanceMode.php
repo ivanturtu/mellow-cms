@@ -19,13 +19,16 @@ class MaintenanceMode
         // Check if maintenance mode is enabled
         $maintenanceEnabled = Setting::get('maintenance_enabled', '0') === '1';
         
-        // Allow access to admin routes and auth routes even in maintenance mode
+        // Allow access to admin routes, auth routes, and Livewire requests even in maintenance mode
         $isAdminRoute = $request->is('admin/*') || $request->is('login') || $request->is('register');
+        $isLivewireRequest = $request->is('livewire/*') || $request->header('X-Livewire');
+        $isAuthRoute = $request->is('login') || $request->is('register') || $request->is('logout') || $request->is('password/*');
         
         // Allow authenticated users to access the site
         $isAuthenticated = auth()->check();
         
-        if ($maintenanceEnabled && !$isAdminRoute && !$isAuthenticated) {
+        // Allow Livewire requests and auth routes even in maintenance mode
+        if ($maintenanceEnabled && !$isAdminRoute && !$isAuthenticated && !$isLivewireRequest && !$isAuthRoute) {
             return response()->view('maintenance', [], 503);
         }
         

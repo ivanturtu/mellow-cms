@@ -62,54 +62,72 @@ new class extends Component
     }
 }; ?>
 
-<section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Profile Information') }}
-        </h2>
-
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
-    </header>
-
-    <form wire:submit="updateProfileInformation" class="mt-6 space-y-6">
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input wire:model="name" id="name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+<div>
+    <form wire:submit="updateProfileInformation">
+        <div class="mb-3">
+            <label for="name" class="form-label">{{ __('Nome') }}</label>
+            <input wire:model="name" 
+                   id="name" 
+                   name="name" 
+                   type="text" 
+                   class="form-control @error('name') is-invalid @enderror" 
+                   required 
+                   autofocus 
+                   autocomplete="name"
+                   placeholder="{{ __('Il tuo nome') }}">
+            @error('name')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
         </div>
 
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" name="email" type="email" class="mt-1 block w-full" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+        <div class="mb-3">
+            <label for="email" class="form-label">{{ __('Email') }}</label>
+            <input wire:model="email" 
+                   id="email" 
+                   name="email" 
+                   type="email" 
+                   class="form-control @error('email') is-invalid @enderror" 
+                   required 
+                   autocomplete="username"
+                   placeholder="nome@esempio.com">
+            @error('email')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
 
             @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800">
-                        {{ __('Your email address is unverified.') }}
-
-                        <button wire:click.prevent="sendVerification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
+                <div class="alert alert-warning mt-2">
+                    <p class="mb-2">{{ __('Il tuo indirizzo email non è verificato.') }}</p>
+                    <button wire:click.prevent="sendVerification" class="btn btn-sm btn-outline-warning">
+                        {{ __('Clicca qui per inviare nuovamente l\'email di verifica.') }}
+                    </button>
 
                     @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600">
-                            {{ __('A new verification link has been sent to your email address.') }}
+                        <p class="mt-2 mb-0 text-success">
+                            {{ __('Un nuovo link di verifica è stato inviato al tuo indirizzo email.') }}
                         </p>
                     @endif
                 </div>
             @endif
         </div>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+        <div class="d-flex align-items-center gap-3">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>{{ __('Salva') }}
+            </button>
 
-            <x-action-message class="me-3" on="profile-updated">
-                {{ __('Saved.') }}
-            </x-action-message>
+            <div wire:loading wire:target="updateProfileInformation" class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Caricamento...</span>
+            </div>
+
+            <div wire:loading.remove wire:target="updateProfileInformation">
+                <div x-data="{ show: false }" 
+                     x-show="show" 
+                     x-transition
+                     @profile-updated.window="show = true; setTimeout(() => show = false, 3000)"
+                     class="text-success">
+                    <i class="fas fa-check-circle me-2"></i>{{ __('Salvato.') }}
+                </div>
+            </div>
         </div>
     </form>
-</section>
+</div>

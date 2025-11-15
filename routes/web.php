@@ -31,6 +31,18 @@ Route::get('/newsletter/check', [NewsletterController::class, 'checkSubscription
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
 
+// Admin redirect route - redirects to dashboard if authenticated, otherwise to login
+// This route must be defined BEFORE the admin prefix to avoid conflicts
+Route::get('/admin', function () {
+    if (auth()->check() && auth()->user()->hasVerifiedEmail()) {
+        return redirect()->route('admin.dashboard');
+    }
+    if (auth()->check()) {
+        return redirect()->route('verification.notice');
+    }
+    return redirect()->route('login');
+})->name('admin');
+
 // Admin routes
 Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
