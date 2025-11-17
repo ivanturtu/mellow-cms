@@ -22,6 +22,9 @@ class ServiceManagement extends Component
     public $is_active = true;
     public $sort_order = 0;
 
+    // Component ID for unique identification
+    public $id;
+
     // Properties for editing
     public $editingService = null;
     public $showForm = false;
@@ -46,6 +49,7 @@ class ServiceManagement extends Component
 
     public function mount()
     {
+        $this->id = uniqid();
         $this->resetForm();
     }
 

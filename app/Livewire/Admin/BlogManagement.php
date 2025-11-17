@@ -24,6 +24,9 @@ class BlogManagement extends Component
     public $is_published = false;
     public $published_at = '';
 
+    // Component ID for unique identification
+    public $id;
+
     // Properties for editing
     public $editingBlog = null;
     public $showForm = false;
@@ -49,6 +52,7 @@ class BlogManagement extends Component
 
     public function mount()
     {
+        $this->id = uniqid();
         $this->resetForm();
     }
 
