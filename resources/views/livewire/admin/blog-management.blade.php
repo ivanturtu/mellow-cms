@@ -246,9 +246,15 @@
 
     <!-- Image Upload Modal -->
     @if($showImageUpload)
-        <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal fade show" style="display: block;" tabindex="-1"
+             ondrop="event.preventDefault(); event.stopPropagation(); return false;"
+             ondragover="event.preventDefault(); event.stopPropagation(); return false;"
+             ondragenter="event.preventDefault(); event.stopPropagation(); return false;">
             <div class="modal-dialog modal-lg">
-                <div class="modal-content">
+                <div class="modal-content"
+                     ondrop="event.preventDefault(); event.stopPropagation(); return false;"
+                     ondragover="event.preventDefault(); event.stopPropagation(); return false;"
+                     ondragenter="event.preventDefault(); event.stopPropagation(); return false;">
                     <div class="modal-header">
                         <h5 class="modal-title">Carica Immagine con Drag & Drop</h5>
                         <button type="button" wire:click="hideImageUploadModal" class="btn-close"></button>

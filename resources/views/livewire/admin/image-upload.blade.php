@@ -1,7 +1,11 @@
 <div class="image-upload-component" id="image-upload-component-{{ $id }}">
     <!-- Drop Zone -->
     <div class="drop-zone {{ $dragOver ? 'drag-over' : '' }}" 
-         onclick="document.getElementById('image-input-{{ $id }}').click()">
+         onclick="document.getElementById('image-input-{{ $id }}').click()"
+         ondrop="return false;"
+         ondragover="return false;"
+         ondragenter="return false;"
+         ondragleave="return false;">
         
         <div class="drop-zone-content text-center">
             <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
@@ -140,10 +144,16 @@
                 return;
             }
 
-            // Prevent default drag behaviors
+            // Prevent default drag behaviors globally
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                // Prevent on drop zone
                 dropZone.addEventListener(eventName, preventDefaults, false);
+                // Prevent on document body
                 document.body.addEventListener(eventName, preventDefaults, false);
+                // Prevent on document itself
+                document.addEventListener(eventName, preventDefaults, false);
+                // Prevent on window
+                window.addEventListener(eventName, preventDefaults, false);
             });
 
             // Highlight drop zone when item is dragged over it
@@ -173,6 +183,7 @@
         function preventDefaults(e) {
             e.preventDefault();
             e.stopPropagation();
+            return false;
         }
 
         function highlight(e) {
@@ -194,6 +205,10 @@
         }
 
         function handleDrop(e) {
+            // CRITICAL: Prevent default behavior FIRST
+            e.preventDefault();
+            e.stopPropagation();
+            
             const dt = e.dataTransfer;
             const files = dt.files;
             
@@ -235,6 +250,41 @@
                 }
             }
         }
+        
+        // Global prevention of default drag/drop behavior when modal is open
+        function preventGlobalDrop(e) {
+            // Only prevent if we're dragging files (not text/html)
+            if (e.dataTransfer && e.dataTransfer.types && e.dataTransfer.types.includes('Files')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        }
+        
+        // Add global listeners when modal is visible
+        const modalObserver = new MutationObserver(function(mutations) {
+            const modal = document.querySelector('.modal.show, .modal[style*="display: block"]');
+            if (modal) {
+                // Prevent default behavior on the entire page when modal is open
+                ['dragenter', 'dragover', 'drop'].forEach(eventName => {
+                    document.addEventListener(eventName, preventGlobalDrop, true);
+                    window.addEventListener(eventName, preventGlobalDrop, true);
+                });
+            } else {
+                // Remove listeners when modal is closed
+                ['dragenter', 'dragover', 'drop'].forEach(eventName => {
+                    document.removeEventListener(eventName, preventGlobalDrop, true);
+                    window.removeEventListener(eventName, preventGlobalDrop, true);
+                });
+            }
+        });
+        
+        modalObserver.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+        });
         
         // Initialize when DOM is ready
         if (document.readyState === 'loading') {
