@@ -265,19 +265,16 @@
                     <div class="swiper-wrapper">
                         @foreach($rooms as $room)
                             <div class="swiper-slide">
-                                <div class="room-item position-relative bg-black rounded-4 overflow-hidden">
-                                    <img src="{{ $room->getOptimizedImageUrl('lg') }}" 
-                                         alt="{{ $room->name }}" 
-                                         class="post-image img-fluid rounded-4"
-                                         srcset="{{ $room->getResponsiveSrcset() }}"
-                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw">
-                                    <div class="product-description position-absolute p-5 text-start">
-                                        <h4 class="display-6 fw-normal text-white">
+                                <div class="room-item position-relative rounded-4 overflow-hidden" 
+                                     style="background-image: url('{{ $room->getOptimizedImageUrl('lg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 650px;">
+                                    <div class="room-overlay position-absolute top-0 start-0 w-100 h-100"></div>
+                                    <div class="product-description position-relative p-5 text-start h-100 d-flex flex-column justify-content-end">
+                                        <h4 class="display-6 fw-normal text-white mb-3">
                                             <a href="{{ route('room.details', $room->slug) }}" class="text-white text-decoration-none">
                                                 {{ $room->name }}
                                             </a>
                                         </h4>
-                                        <table>
+                                        <table class="mb-3">
                                             <tbody>
                                                 <tr class="text-white">
                                                     <td class="pe-2">Prezzo:</td>
@@ -308,21 +305,9 @@
                                             </tbody>
                                         </table>
                                         <a href="{{ route('room.details', $room->slug) }}">
-                                            <p class="text-decoration-underline text-white m-0 mt-2">Sfoglia Ora</p>
+                                            <p class="text-decoration-underline text-white m-0">Sfoglia Ora</p>
                                         </a>
                                     </div>
-                                </div>
-                                <div class="room-content text-center mt-3">
-                                    <h4 class="display-6 fw-normal"><a href="{{ route('room.details', $room->slug) }}">{{ $room->name }}</a></h4>
-                                    <p>
-                                        <span class="text-primary fs-4">
-                                            @if($room->show_price ?? true)
-                                                €{{ $room->price }}/notte
-                                            @else
-                                                Prezzi su richiesta
-                                            @endif
-                                        </span>
-                                    </p>
                                 </div>
                             </div>
                         @endforeach
@@ -633,41 +618,31 @@
             fill: #ffffff;
         }
 
-        /* Uniform room boxes height */
+        /* Vertical room boxes with background image */
         .room-swiper .swiper-slide {
-            display: flex;
-            flex-direction: column;
             height: auto;
         }
 
-        .room-swiper .swiper-slide > div:first-child {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
         .room-item {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .room-item img.post-image {
             width: 100%;
-            height: 400px;
-            object-fit: cover;
-        }
-
-        .room-content {
-            min-height: 80px;
+            min-height: 650px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            position: relative;
+        }
+
+        .room-overlay {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.1) 100%);
+            z-index: 1;
+        }
+
+        .room-item .product-description {
+            z-index: 2;
         }
 
         @media (max-width: 768px) {
-            .room-item img.post-image {
-                height: 300px;
+            .room-item {
+                min-height: 500px;
             }
         }
         
