@@ -22,8 +22,8 @@ class Setting extends Model
     public static function set($key, $value, $type = 'text', $group = 'general')
     {
         return static::updateOrCreate(
-            ['key' => $key],
-            ['value' => $value, 'type' => $type, 'group' => $group]
+            ['key' => $key, 'group' => $group],
+            ['value' => $value, 'type' => $type]
         );
     }
 
