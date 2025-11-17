@@ -163,7 +163,13 @@
                                wire:model.lazy="settings.general.google_maps_api_key" 
                                class="form-control" 
                                placeholder="AIzaSy...">
-                        <small class="form-text text-muted">Chiave API di Google Maps per visualizzare le mappe. <a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank">Come ottenere una chiave API</a></small>
+                        <small class="form-text text-muted">
+                            Chiave API di Google Maps per visualizzare le mappe. 
+                            <a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank">Come ottenere una chiave API</a>
+                            <br>
+                            <strong>Importante:</strong> Assicurati di aver abilitato l'API "Maps Embed API" nel tuo progetto Google Cloud Console. 
+                            Se ricevi un errore 403, verifica che l'API sia abilitata nel progetto associato alla chiave.
+                        </small>
                     </div>
                 </div>
             </div>

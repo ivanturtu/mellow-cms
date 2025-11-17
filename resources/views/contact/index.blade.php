@@ -232,24 +232,42 @@
                         $apiKeySetting = \App\Models\Setting::where('group', 'general')->where('key', 'google_maps_api_key')->first();
                         $apiKey = $apiKeySetting && $apiKeySetting->value ? $apiKeySetting->value : env('GOOGLE_MAPS_API_KEY');
                         
+                        // Use Google Maps Embed API with API key if available
+                        // Otherwise, use a simple search link
                         if ($apiKey) {
-                            // Use Google Maps Embed API with API key for better control
                             $zoom = $settings['general']['map_zoom'] ?? '15';
                             $mapUrl = "https://www.google.com/maps/embed/v1/place?key={$apiKey}&q=" . urlencode($address) . "&zoom={$zoom}";
                         } else {
-                            // Use standard Google Maps embed without API key - center on address
-                            $mapUrl = "https://www.google.com/maps/embed/v1/place?q=" . urlencode($address) . "&zoom=15";
+                            // Fallback: use Google Maps search URL (no API key needed)
+                            $mapUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d0!3d0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDAwJzAwLjAiTiAwwrAwJzAwLjAiRQ!5e0!3m2!1sit!2sit!4v1234567890123!5m2!1sit!2sit";
+                            // Alternative: use search query (works without API key but less control)
+                            $searchUrl = "https://www.google.com/maps/search/" . urlencode($address);
                         }
                     @endphp
-                    <iframe 
-                        src="{{ $mapUrl }}" 
-                        width="100%" 
-                        height="400" 
-                        style="border:0;" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+                    @if($apiKey)
+                        <iframe 
+                            src="{{ $mapUrl }}" 
+                            width="100%" 
+                            height="400" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    @else
+                        <div class="d-flex align-items-center justify-content-center" style="height: 400px; background-color: #f5f5f5;">
+                            <div class="text-center p-4">
+                                <i class="fas fa-map-marker-alt fa-3x text-muted mb-3"></i>
+                                <h5 class="mb-2">Mappa non disponibile</h5>
+                                <p class="text-muted mb-3">{{ $address }}</p>
+                                <a href="{{ $searchUrl ?? 'https://www.google.com/maps/search/' . urlencode($address) }}" 
+                                   target="_blank" 
+                                   class="btn btn-primary">
+                                    <i class="fas fa-external-link-alt me-2"></i>Apri su Google Maps
+                                </a>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

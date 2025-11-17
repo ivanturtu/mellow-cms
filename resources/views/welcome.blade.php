@@ -271,8 +271,8 @@
                             <div class="swiper-slide">
                                 <div class="room-item position-relative rounded-4 overflow-hidden" 
                                      style="background-image: url('{{ $room->getOptimizedImageUrl('lg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 650px;">
-                                    <div class="room-overlay position-absolute top-0 start-0 w-100 h-100"></div>
-                                    <div class="product-description position-relative p-5 text-start h-100 d-flex flex-column justify-content-end">
+                                    <div class="room-overlay position-absolute top-0 start-0 w-100 h-100 d-none d-lg-block"></div>
+                                    <div class="product-description position-relative p-5 text-start h-100 d-flex flex-column justify-content-end d-none d-lg-flex">
                                         <h4 class="display-6 fw-normal text-white mb-3">
                                             <a href="{{ route('room.details', $room->slug) }}" class="text-white text-decoration-none">
                                                 {{ $room->name }}
@@ -310,6 +310,24 @@
                                         </table>
                                         <a href="{{ route('room.details', $room->slug) }}">
                                             <p class="text-decoration-underline text-white m-0">Sfoglia Ora</p>
+                                        </a>
+                                    </div>
+                                    <!-- Mobile content -->
+                                    <div class="room-mobile-content d-lg-none position-absolute bottom-0 start-0 w-100 p-4 bg-white">
+                                        <h4 class="h3 fw-normal mb-2">
+                                            <a href="{{ route('room.details', $room->slug) }}" class="text-dark text-decoration-none">
+                                                {{ $room->name }}
+                                            </a>
+                                        </h4>
+                                        <p class="mb-2 text-muted">
+                                            @if($room->show_price ?? true)
+                                                €{{ $room->price }} /Notte
+                                            @else
+                                                Prezzi su richiesta
+                                            @endif
+                                        </p>
+                                        <a href="{{ route('room.details', $room->slug) }}" class="text-primary text-decoration-none">
+                                            Scopri di più →
                                         </a>
                                     </div>
                                 </div>
@@ -646,7 +664,11 @@
 
         @media (max-width: 768px) {
             .room-item {
-                min-height: 500px;
+                min-height: 300px; /* Reduced height for mobile */
+            }
+            .room-mobile-content {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
             }
         }
         
