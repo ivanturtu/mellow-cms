@@ -278,6 +278,43 @@
         </div>
     </div>
 
+    <!-- Privacy Policy Section -->
+    <div class="card mb-4 border-info">
+        <div class="card-header bg-info bg-opacity-10">
+            <h5 class="mb-0">
+                <i class="fas fa-shield-alt me-2"></i>Privacy Policy
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Gestisci il contenuto della Privacy Policy che verrà visualizzato nella pagina pubblica.
+            </div>
+            
+            <div class="row">
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="privacy_policy_content" class="form-label">Contenuto Privacy Policy</label>
+                        <textarea wire:model.lazy="settings.privacy.privacy_policy_content" 
+                                  class="form-control" 
+                                  id="privacy_policy_content"
+                                  rows="15" 
+                                  placeholder="Inserisci il contenuto della Privacy Policy..."></textarea>
+                        <small class="form-text text-muted">
+                            Il contenuto verrà visualizzato nella pagina Privacy Policy. Puoi utilizzare testo semplice o HTML base.
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-end">
+                <button type="button" wire:click="savePrivacyPolicySettings" class="btn btn-info">
+                    <i class="fas fa-save me-2"></i>Salva Privacy Policy
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Mailchimp Newsletter Section -->
     <div class="card mb-4">
         <div class="card-header">

@@ -47,6 +47,11 @@ class SettingsManagement extends Component
         if (!isset($this->settings['maintenance']['maintenance_message'])) {
             $this->settings['maintenance']['maintenance_message'] = Setting::get('maintenance_message', 'Stiamo lavorando per migliorare il sito. Torneremo presto online!');
         }
+        
+        // Initialize privacy policy settings if they don't exist
+        if (!isset($this->settings['privacy']['privacy_policy_content'])) {
+            $this->settings['privacy']['privacy_policy_content'] = Setting::get('privacy_policy_content', '');
+        }
     }
 
     public function render()
@@ -273,6 +278,19 @@ class SettingsManagement extends Component
         
         // Ensure the checkbox value is set correctly after reload
         $this->settings['maintenance']['maintenance_enabled'] = $enabled;
+    }
+
+    public function savePrivacyPolicySettings()
+    {
+        // Save privacy policy content
+        if (isset($this->settings['privacy']['privacy_policy_content'])) {
+            Setting::set('privacy_policy_content', $this->settings['privacy']['privacy_policy_content'], 'textarea', 'privacy');
+        }
+        
+        session()->flash('success', 'Privacy Policy salvata con successo!');
+        
+        // Reload settings to reflect changes
+        $this->loadSettings();
     }
 
 }
