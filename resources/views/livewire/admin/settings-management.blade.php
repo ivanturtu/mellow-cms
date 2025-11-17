@@ -142,6 +142,20 @@
                                placeholder="Codice Identificativo Nazionale">
                     </div>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="form-label">Motto del Sito</label>
+                        <input type="text" 
+                               wire:model.lazy="settings.general.site_motto" 
+                               class="form-control" 
+                               placeholder="es. Il vostro gateway alla valle peligna">
+                        <small class="form-text text-muted">Testo visualizzato nel footer sotto il logo</small>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label class="form-label">Latitudine Mappa</label>

@@ -250,6 +250,9 @@ class SettingsManagement extends Component
         if (isset($this->settings['general']['cin'])) {
             $this->updateSetting('general', 'cin', $this->settings['general']['cin']);
         }
+        if (isset($this->settings['general']['site_motto'])) {
+            $this->updateSetting('general', 'site_motto', $this->settings['general']['site_motto']);
+        }
         if (isset($this->settings['general']['map_latitude'])) {
             $this->updateSetting('general', 'map_latitude', $this->settings['general']['map_latitude']);
         }

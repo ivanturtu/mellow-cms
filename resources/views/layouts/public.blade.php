@@ -328,8 +328,8 @@
             <img src="{{ $footerLogoPath }}" alt="Logo" class="img-fluid mb-3" style="max-height: 60px;">
             <p class="text-dark">
               @php
-                $hotelDescription = \App\Models\Setting::where('group', 'general')->where('key', 'hotel_description')->first();
-                echo $hotelDescription ? $hotelDescription->value : 'Il vostro gateway alla serenità nel cuore della città.';
+                $siteMotto = \App\Models\Setting::where('group', 'general')->where('key', 'site_motto')->first();
+                echo $siteMotto ? $siteMotto->value : 'Il vostro gateway alla valle peligna';
               @endphp
             </p>
             <div class="social-links mt-3">
