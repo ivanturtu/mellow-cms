@@ -398,7 +398,7 @@
     <!-- Settings Groups -->
     @if(count($settings) > 0)
         @foreach($settings as $group => $groupSettings)
-            @if($group !== 'mailchimp' && $group !== 'social' && $group !== 'general' && $group !== 'contact' && $group !== 'maintenance' && $group !== 'seo')
+            @if($group !== 'mailchimp' && $group !== 'social' && $group !== 'general' && $group !== 'contact' && $group !== 'maintenance' && $group !== 'seo' && $group !== 'privacy')
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="mb-0 text-capitalize">{{ $group }}</h5>
