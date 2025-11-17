@@ -259,16 +259,7 @@
     @if($rooms->count() > 0)
         <section id="rooms" class="padding-medium">
             <div class="container-fluid padding-side" data-aos="fade-up">
-                <div class="d-flex flex-wrap align-items-center justify-content-between">
-                    <div>
-                        <h3 class="display-3 fw-normal text-center">Esplora le nostre camere</h3>
-                    </div>
-                    <a href="#rooms" class="btn btn-arrow btn-primary mt-3">
-                        <span>Esplora camere<svg width="18" height="18">
-                                <use xlink:href="#arrow-right"></use>
-                            </svg></span>
-                    </a>
-                </div>
+                <h3 class="display-3 fw-normal text-center">Esplora le nostre camere</h3>
 
                 <div class="swiper room-swiper mt-5">
                     <div class="swiper-wrapper">
@@ -286,7 +277,6 @@
                                                 {{ $room->name }}
                                             </a>
                                         </h4>
-                                        <p class="product-paragraph text-white">{{ $room->description }}</p>
                                         <table>
                                             <tbody>
                                                 <tr class="text-white">
