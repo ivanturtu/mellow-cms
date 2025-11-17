@@ -8,6 +8,7 @@ use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\PrivacyPolicyController;
 
 // Frontend routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -21,6 +22,9 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 // Contact routes
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Privacy Policy route
+Route::get('/privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
 
 // Newsletter routes
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
