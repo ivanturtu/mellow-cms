@@ -77,11 +77,8 @@ class ImageUpload extends Component
                 'component_id' => $this->id
             ]);
             
-            // Dispatch both globally and to parent component
+            // Dispatch the event - Livewire will broadcast it to all listeners
             $this->dispatch('imageUploaded', $imagePath);
-            
-            // Also try broadcasting to ensure parent receives it
-            $this->dispatch('imageUploaded', imagePath: $imagePath);
         }
     }
 
