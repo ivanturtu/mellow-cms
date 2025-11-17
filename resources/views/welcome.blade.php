@@ -46,11 +46,11 @@
                         <h3 class="h4 mb-3">Check availability</h3>
                         <div class="col-lg-12 mb-2">
                             <label class="form-label text-uppercase small">Check-In</label>
-                            <input type="date" class="form-control form-control-sm text-black-50 ps-2" id="checkin-date" name="checkin_date" required>
+                            <input type="date" class="form-control form-control-sm text-black-50 ps-2" id="checkin-date" name="checkin_date" min="{{ date('Y-m-d') }}" required>
                         </div>
                         <div class="col-lg-12 mb-2">
                             <label class="form-label text-uppercase small">Check-Out</label>
-                            <input type="date" class="form-control form-control-sm text-black-50 ps-2" id="checkout-date" name="checkout_date" required>
+                            <input type="date" class="form-control form-control-sm text-black-50 ps-2" id="checkout-date" name="checkout_date" min="{{ date('Y-m-d', strtotime('+1 day')) }}" required>
                         </div>
                         <div class="col-lg-12 mb-2">
                             <label class="form-label text-uppercase small">Rooms</label>
@@ -101,11 +101,11 @@
                 <div class="row g-2">
                     <div class="col-6">
                         <label class="form-label text-uppercase small mb-1">Check-In</label>
-                        <input type="date" class="form-control form-control-sm" id="checkin-date-mobile" name="checkin_date" required>
+                        <input type="date" class="form-control form-control-sm" id="checkin-date-mobile" name="checkin_date" min="{{ date('Y-m-d') }}" required>
                     </div>
                     <div class="col-6">
                         <label class="form-label text-uppercase small mb-1">Check-Out</label>
-                        <input type="date" class="form-control form-control-sm" id="checkout-date-mobile" name="checkout_date" required>
+                        <input type="date" class="form-control form-control-sm" id="checkout-date-mobile" name="checkout_date" min="{{ date('Y-m-d', strtotime('+1 day')) }}" required>
                     </div>
                     <div class="col-6">
                         <label class="form-label text-uppercase small mb-1">Rooms</label>
@@ -699,6 +699,37 @@
             const mobileBookingPanel = document.getElementById('mobileBookingPanel');
             const mobileBookingClose = document.getElementById('mobileBookingClose');
             const mobileBookingOverlay = document.getElementById('mobileBookingOverlay');
+            
+            // Date validation: update checkout min date when checkin changes
+            function updateCheckoutMin(checkinInput, checkoutInput) {
+                if (checkinInput && checkoutInput) {
+                    checkinInput.addEventListener('change', function() {
+                        const checkinDate = new Date(this.value);
+                        if (checkinDate && !isNaN(checkinDate.getTime())) {
+                            // Set checkout min to checkin date + 1 day
+                            const minCheckoutDate = new Date(checkinDate);
+                            minCheckoutDate.setDate(minCheckoutDate.getDate() + 1);
+                            const minDateString = minCheckoutDate.toISOString().split('T')[0];
+                            checkoutInput.setAttribute('min', minDateString);
+                            
+                            // If current checkout value is before the new min, clear it
+                            if (checkoutInput.value && checkoutInput.value <= this.value) {
+                                checkoutInput.value = '';
+                            }
+                        }
+                    });
+                }
+            }
+            
+            // Initialize date validation for desktop form
+            const desktopCheckin = document.getElementById('checkin-date');
+            const desktopCheckout = document.getElementById('checkout-date');
+            updateCheckoutMin(desktopCheckin, desktopCheckout);
+            
+            // Initialize date validation for mobile form
+            const mobileCheckin = document.getElementById('checkin-date-mobile');
+            const mobileCheckout = document.getElementById('checkout-date-mobile');
+            updateCheckoutMin(mobileCheckin, mobileCheckout);
             
             // Mobile booking panel controls
             if (mobileBookingBtn && mobileBookingPanel) {

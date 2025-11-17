@@ -298,11 +298,11 @@
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label text-uppercase small">Check-In</label>
-                                <input type="date" class="form-control text-black-50 ps-2" name="checkin_date" required>
+                                <input type="date" class="form-control text-black-50 ps-2" id="checkin-date-room" name="checkin_date" min="{{ date('Y-m-d') }}" required>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label text-uppercase small">Check-Out</label>
-                                <input type="date" class="form-control text-black-50 ps-2" name="checkout_date" required>
+                                <input type="date" class="form-control text-black-50 ps-2" id="checkout-date-room" name="checkout_date" min="{{ date('Y-m-d', strtotime('+1 day')) }}" required>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label text-uppercase small">Camere</label>
@@ -370,6 +370,28 @@ function changeMainImage(imageSrc, imageAlt) {
 // Handle booking form submission
 document.addEventListener('DOMContentLoaded', function() {
     const bookingForm = document.getElementById('check_available');
+    
+    // Date validation: update checkout min date when checkin changes
+    const checkinInput = document.getElementById('checkin-date-room');
+    const checkoutInput = document.getElementById('checkout-date-room');
+    
+    if (checkinInput && checkoutInput) {
+        checkinInput.addEventListener('change', function() {
+            const checkinDate = new Date(this.value);
+            if (checkinDate && !isNaN(checkinDate.getTime())) {
+                // Set checkout min to checkin date + 1 day
+                const minCheckoutDate = new Date(checkinDate);
+                minCheckoutDate.setDate(minCheckoutDate.getDate() + 1);
+                const minDateString = minCheckoutDate.toISOString().split('T')[0];
+                checkoutInput.setAttribute('min', minDateString);
+                
+                // If current checkout value is before the new min, clear it
+                if (checkoutInput.value && checkoutInput.value <= this.value) {
+                    checkoutInput.value = '';
+                }
+            }
+        });
+    }
     
     if (bookingForm) {
         bookingForm.addEventListener('submit', function(e) {
