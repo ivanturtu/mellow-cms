@@ -337,6 +337,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     contactForm.addEventListener('submit', handleContactSubmit);
     
+    // Clear validation errors when user starts typing
+    const formInputs = contactForm.querySelectorAll('input, textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                this.classList.remove('is-invalid');
+                const errorFeedback = this.parentElement.querySelector('.invalid-feedback:not([data-blade-error])');
+                if (errorFeedback) {
+                    errorFeedback.remove();
+                }
+            }
+        });
+    });
+    
     function handleContactSubmit(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -370,16 +384,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRF-TOKEN': csrfToken
             }
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(response => {
+            return response.json().then(data => {
+                return { status: response.status, data: data };
+            });
+        })
+        .then(({ status, data }) => {
             if (data.success) {
+                // Clear any previous validation errors
+                clearValidationErrors(form);
                 showModal('success', 'Messaggio Inviato!', data.message || 'Messaggio inviato con successo! Ti risponderemo presto.');
                 form.reset();
             } else {
-                showModal('error', 'Errore', data.message || 'Errore durante l\'invio del messaggio.');
+                // Handle validation errors
+                if (status === 422 && data.errors) {
+                    displayValidationErrors(form, data.errors);
+                    // Build error message list
+                    const errorMessages = [];
+                    for (const field in data.errors) {
+                        if (data.errors[field] && data.errors[field].length > 0) {
+                            errorMessages.push(data.errors[field][0]);
+                        }
+                    }
+                    const errorMessage = errorMessages.length > 0 
+                        ? errorMessages.join('<br>') 
+                        : (data.message || 'Dati non validi');
+                    showModal('error', 'Errore', errorMessage);
+                } else {
+                    // Clear any previous validation errors
+                    clearValidationErrors(form);
+                    showModal('error', 'Errore', data.message || 'Errore durante l\'invio del messaggio.');
+                }
             }
         })
         .catch(error => {
+            clearValidationErrors(form);
             showModal('error', 'Errore', 'Errore durante l\'invio del messaggio. Riprova più tardi.');
         })
         .finally(() => {
@@ -394,6 +433,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.innerHTML = originalText;
             }
         });
+    }
+    
+    // Function to clear validation errors
+    function clearValidationErrors(form) {
+        // Remove invalid classes
+        const invalidInputs = form.querySelectorAll('.is-invalid');
+        invalidInputs.forEach(input => {
+            input.classList.remove('is-invalid');
+        });
+        
+        // Remove error feedback divs
+        const errorFeedbacks = form.querySelectorAll('.invalid-feedback');
+        errorFeedbacks.forEach(feedback => {
+            if (!feedback.hasAttribute('data-blade-error')) {
+                feedback.remove();
+            }
+        });
+    }
+    
+    // Function to display validation errors
+    function displayValidationErrors(form, errors) {
+        // Clear previous errors first
+        clearValidationErrors(form);
+        
+        // Display errors for each field
+        for (const field in errors) {
+            const input = form.querySelector(`[name="${field}"]`);
+            if (input) {
+                // Add invalid class
+                input.classList.add('is-invalid');
+                
+                // Create or update error feedback
+                let errorFeedback = input.parentElement.querySelector('.invalid-feedback:not([data-blade-error])');
+                if (!errorFeedback) {
+                    errorFeedback = document.createElement('div');
+                    errorFeedback.className = 'invalid-feedback';
+                    input.parentElement.appendChild(errorFeedback);
+                }
+                
+                // Set error message
+                if (errors[field] && errors[field].length > 0) {
+                    errorFeedback.textContent = errors[field][0];
+                    errorFeedback.style.display = 'block';
+                }
+            }
+        }
     }
     
     // Function to show modal - use global function if available, otherwise define locally
@@ -421,7 +506,12 @@ document.addEventListener('DOMContentLoaded', function() {
             modalTitle.className = 'mb-3 text-danger';
         }
         
-        modalMessage.textContent = message;
+        // Handle HTML messages (for validation errors)
+        if (message.includes('<br>')) {
+            modalMessage.innerHTML = message;
+        } else {
+            modalMessage.textContent = message;
+        }
         modal.show();
         
         // Clean up overlay when modal is hidden
