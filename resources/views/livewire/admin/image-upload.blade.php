@@ -254,40 +254,42 @@
             }
         }
         
-        // Global prevention of default drag/drop behavior when modal is open
-        function preventGlobalDrop(e) {
-            // Only prevent if we're dragging files (not text/html)
-            if (e.dataTransfer && e.dataTransfer.types && e.dataTransfer.types.includes('Files')) {
+        // Global handler to route drag events to drop zone
+        function handleGlobalDrag(e) {
+            // Only handle file drags
+            if (!e.dataTransfer || !e.dataTransfer.types || !e.dataTransfer.types.includes('Files')) {
+                return;
+            }
+            
+            const dropZone = document.querySelector('#image-upload-component-' + componentId + ' .drop-zone');
+            if (!dropZone) {
+                return;
+            }
+            
+            // Check if we're over the drop zone
+            const rect = dropZone.getBoundingClientRect();
+            const x = e.clientX;
+            const y = e.clientY;
+            const isOverDropZone = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+            
+            if (isOverDropZone) {
+                // Let the drop zone handle it
+                return;
+            }
+            
+            // If dragging over modal but not drop zone, prevent default
+            const modal = document.querySelector('.modal.show, .modal[style*="display: block"]');
+            if (modal && e.type === 'drop') {
                 e.preventDefault();
                 e.stopPropagation();
-                return false;
+                console.log('[ImageUpload Debug] Drop prevented outside drop zone');
             }
         }
         
-        // Add global listeners when modal is visible
-        const modalObserver = new MutationObserver(function(mutations) {
-            const modal = document.querySelector('.modal.show, .modal[style*="display: block"]');
-            if (modal) {
-                // Prevent default behavior on the entire page when modal is open
-                ['dragenter', 'dragover', 'drop'].forEach(eventName => {
-                    document.addEventListener(eventName, preventGlobalDrop, true);
-                    window.addEventListener(eventName, preventGlobalDrop, true);
-                });
-            } else {
-                // Remove listeners when modal is closed
-                ['dragenter', 'dragover', 'drop'].forEach(eventName => {
-                    document.removeEventListener(eventName, preventGlobalDrop, true);
-                    window.removeEventListener(eventName, preventGlobalDrop, true);
-                });
-            }
-        });
-        
-        modalObserver.observe(document.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['style', 'class']
-        });
+        // Add global listeners when component is in DOM
+        document.addEventListener('dragenter', handleGlobalDrag, true);
+        document.addEventListener('dragover', handleGlobalDrag, true);
+        document.addEventListener('drop', handleGlobalDrag, true);
         
         // Initialize when DOM is ready
         if (document.readyState === 'loading') {
