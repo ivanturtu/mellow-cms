@@ -156,6 +156,18 @@
                 </div>
             </div>
             <div class="row">
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="form-label">Google Maps API Key</label>
+                        <input type="text" 
+                               wire:model.lazy="settings.general.google_maps_api_key" 
+                               class="form-control" 
+                               placeholder="AIzaSy...">
+                        <small class="form-text text-muted">Chiave API di Google Maps per visualizzare le mappe. <a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank">Come ottenere una chiave API</a></small>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label class="form-label">Latitudine Mappa</label>

@@ -253,6 +253,9 @@ class SettingsManagement extends Component
         if (isset($this->settings['general']['site_motto'])) {
             $this->updateSetting('general', 'site_motto', $this->settings['general']['site_motto']);
         }
+        if (isset($this->settings['general']['google_maps_api_key'])) {
+            $this->updateSetting('general', 'google_maps_api_key', $this->settings['general']['google_maps_api_key']);
+        }
         if (isset($this->settings['general']['map_latitude'])) {
             $this->updateSetting('general', 'map_latitude', $this->settings['general']['map_latitude']);
         }

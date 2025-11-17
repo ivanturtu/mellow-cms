@@ -228,7 +228,9 @@
                 <div class="map-container rounded-4 overflow-hidden shadow">
                     @php
                         $address = $settings['general']['contact_address'] ?? 'Via Roma 123, Roma, Italia';
-                        $apiKey = env('GOOGLE_MAPS_API_KEY');
+                        // Get API key from settings or fallback to env
+                        $apiKeySetting = \App\Models\Setting::where('group', 'general')->where('key', 'google_maps_api_key')->first();
+                        $apiKey = $apiKeySetting && $apiKeySetting->value ? $apiKeySetting->value : env('GOOGLE_MAPS_API_KEY');
                         
                         if ($apiKey) {
                             // Use Google Maps Embed API with API key for better control
