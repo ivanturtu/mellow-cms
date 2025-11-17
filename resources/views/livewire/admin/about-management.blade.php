@@ -1,3 +1,21 @@
+<!-- Trix Editor CSS -->
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
+<style>
+    trix-editor {
+        min-height: 200px;
+    }
+    trix-toolbar {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-bottom: none;
+        border-radius: 0.375rem 0.375rem 0 0;
+    }
+    trix-editor.form-control {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+</style>
+
 <div class="about-management-component">
     <div class="row">
         <div class="col-12">
@@ -107,9 +125,10 @@
 
                         <div class="mb-3">
                             <label for="description" class="form-label">Descrizione *</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror" 
-                                      id="description" wire:model="description" rows="4" 
-                                      placeholder="Descrizione della sezione About..."></textarea>
+                            <input id="description" type="hidden" wire:model="description">
+                            <trix-editor input="description" 
+                                        class="form-control @error('description') is-invalid @enderror"
+                                        placeholder="Descrizione della sezione About..."></trix-editor>
                             @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
@@ -213,11 +232,51 @@
     </div>
 </div>
 
+<!-- Trix Editor JS -->
+<script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
+
 <script>
 document.addEventListener('livewire:init', function () {
+    // Listen to Trix changes and update Livewire
+    document.addEventListener('trix-change', function(event) {
+        if (event.target && event.target.input && event.target.input.id === 'description') {
+            const hiddenInput = document.getElementById('description');
+            if (hiddenInput) {
+                @this.set('description', hiddenInput.value);
+            }
+        }
+    });
+    
+    // Sync Trix when Livewire updates description (e.g., when editing)
+    Livewire.hook('morph.updated', ({ component }) => {
+        const trixEditor = document.querySelector('trix-editor[input="description"]');
+        const descriptionInput = document.getElementById('description');
+        
+        if (trixEditor && trixEditor.editor && descriptionInput && component.get('description')) {
+            const currentTrixContent = trixEditor.editor.getDocument().toString();
+            const livewireContent = component.get('description') || '';
+            
+            // Only update if content is different to avoid infinite loops
+            if (currentTrixContent !== livewireContent && descriptionInput.value !== livewireContent) {
+                trixEditor.editor.loadHTML(livewireContent);
+            }
+        }
+    });
+    
+    // Initialize Trix editor when modal opens
     Livewire.on('openModal', () => {
         const modal = new bootstrap.Modal(document.getElementById('aboutModal'));
         modal.show();
+        
+        // Wait for modal to be fully shown, then initialize Trix
+        setTimeout(() => {
+            const descriptionInput = document.getElementById('description');
+            const trixEditor = document.querySelector('trix-editor[input="description"]');
+            
+            if (descriptionInput && trixEditor && @this.description) {
+                trixEditor.editor.loadHTML(@this.description || '');
+            }
+        }, 300);
     });
     
     Livewire.on('closeModal', () => {
@@ -252,11 +311,17 @@ document.addEventListener('livewire:init', function () {
         }, 100);
     });
     
-    // Gestione overlay per il modal About
+    // Gestione overlay per il modal About e reset Trix
     document.addEventListener('DOMContentLoaded', function() {
         const aboutModal = document.getElementById('aboutModal');
         if (aboutModal) {
             aboutModal.addEventListener('hidden.bs.modal', function () {
+                // Reset Trix editor
+                const trixEditor = document.querySelector('trix-editor[input="description"]');
+                if (trixEditor && trixEditor.editor) {
+                    trixEditor.editor.loadHTML('');
+                }
+                
                 // Rimuovi l'overlay quando il modal si chiude
                 const backdrop = document.querySelector('.modal-backdrop');
                 if (backdrop) {
@@ -265,6 +330,18 @@ document.addEventListener('livewire:init', function () {
                 document.body.classList.remove('modal-open');
                 document.body.style.overflow = '';
                 document.body.style.paddingRight = '';
+            });
+            
+            // Also listen for when modal is shown to sync Trix with Livewire data
+            aboutModal.addEventListener('shown.bs.modal', function() {
+                setTimeout(() => {
+                    const descriptionInput = document.getElementById('description');
+                    const trixEditor = document.querySelector('trix-editor[input="description"]');
+                    
+                    if (descriptionInput && trixEditor && @this.description) {
+                        trixEditor.editor.loadHTML(@this.description || '');
+                    }
+                }, 100);
             });
         }
     });
