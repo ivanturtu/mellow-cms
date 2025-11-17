@@ -1,11 +1,7 @@
 <div class="image-upload-component" id="image-upload-component-{{ $id }}">
     <!-- Drop Zone -->
     <div class="drop-zone {{ $dragOver ? 'drag-over' : '' }}" 
-         onclick="document.getElementById('image-input-{{ $id }}').click()"
-         ondrop="return false;"
-         ondragover="return false;"
-         ondragenter="return false;"
-         ondragleave="return false;">
+         onclick="document.getElementById('image-input-{{ $id }}').click()">
         
         <div class="drop-zone-content text-center">
             <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
@@ -136,6 +132,12 @@
                 return;
             }
             
+            // Check if already initialized
+            if (dropZone.hasAttribute('data-drag-initialized')) {
+                console.log('[ImageUpload Debug] Drop zone already initialized, skipping...');
+                return;
+            }
+            
             const input = document.getElementById(inputId);
             console.log('[ImageUpload Debug] Input element found:', !!input);
             
@@ -144,36 +146,37 @@
                 return;
             }
 
-            // Prevent default drag behaviors globally
+            // Mark as initialized
+            dropZone.setAttribute('data-drag-initialized', 'true');
+
+            // Prevent default drag behaviors on drop zone
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                // Prevent on drop zone
                 dropZone.addEventListener(eventName, preventDefaults, false);
-                // Prevent on document body
-                document.body.addEventListener(eventName, preventDefaults, false);
-                // Prevent on document itself
-                document.addEventListener(eventName, preventDefaults, false);
-                // Prevent on window
-                window.addEventListener(eventName, preventDefaults, false);
             });
 
             // Highlight drop zone when item is dragged over it
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, function(e) {
-                    console.log('[ImageUpload Debug] Event:', eventName);
-                    highlight(e);
-                }, false);
-            });
+            dropZone.addEventListener('dragenter', function(e) {
+                console.log('[ImageUpload Debug] dragenter event');
+                preventDefaults(e);
+                highlight(e);
+            }, false);
+            
+            dropZone.addEventListener('dragover', function(e) {
+                console.log('[ImageUpload Debug] dragover event');
+                preventDefaults(e);
+                highlight(e);
+            }, false);
 
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, function(e) {
-                    console.log('[ImageUpload Debug] Event:', eventName);
-                    unhighlight(e);
-                }, false);
-            });
+            dropZone.addEventListener('dragleave', function(e) {
+                console.log('[ImageUpload Debug] dragleave event');
+                preventDefaults(e);
+                unhighlight(e);
+            }, false);
 
             // Handle dropped files
             dropZone.addEventListener('drop', function(e) {
-                console.log('[ImageUpload Debug] Drop event triggered');
+                console.log('[ImageUpload Debug] drop event triggered');
+                preventDefaults(e);
                 handleDrop(e);
             }, false);
             
@@ -307,15 +310,18 @@
             });
         }
         
-        // Alternative: Use MutationObserver to detect when modal opens
+        // Use MutationObserver to detect when modal opens and component is added to DOM
         const observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.addedNodes.length) {
-                    const dropZone = document.querySelector('#image-upload-component-' + componentId + ' .drop-zone');
-                    if (dropZone && !dropZone.hasAttribute('data-drag-initialized')) {
-                        console.log('[ImageUpload Debug] Drop zone detected in DOM, initializing...');
-                        dropZone.setAttribute('data-drag-initialized', 'true');
-                        setTimeout(initDragAndDrop, 50);
+                    // Check if our component was added
+                    const component = document.getElementById('image-upload-component-' + componentId);
+                    if (component) {
+                        const dropZone = component.querySelector('.drop-zone');
+                        if (dropZone && !dropZone.hasAttribute('data-drag-initialized')) {
+                            console.log('[ImageUpload Debug] Component detected in DOM, initializing drag & drop...');
+                            setTimeout(initDragAndDrop, 100);
+                        }
                     }
                 }
             });
@@ -326,6 +332,9 @@
             childList: true,
             subtree: true
         });
+        
+        // Also try initialization immediately
+        setTimeout(initDragAndDrop, 200);
     })();
     </script>
 </div>
