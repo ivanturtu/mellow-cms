@@ -25,46 +25,52 @@ class AboutManagement extends Component
     public $image_3;
     public $is_active = true;
     public $sort_order = 0;
-    public $editing = false;
-    public $search = '';
 
     public function mount()
     {
         $this->id = uniqid();
+        $this->loadAboutSection();
+    }
+    
+    public function updated($propertyName)
+    {
+        // Questo metodo viene chiamato automaticamente quando una proprietà viene aggiornata
+        // Non serve fare nulla, ma può essere utile per debug
     }
 
     public function render()
     {
-        $aboutSections = AboutSection::when($this->search, function ($query) {
-            return $query->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('subtitle', 'like', '%' . $this->search . '%');
-        })->ordered()->paginate(10);
-
-        return view('livewire.admin.about-management', compact('aboutSections'));
+        return view('livewire.admin.about-management');
     }
 
-    public function create()
+    private function loadAboutSection()
     {
-        $this->resetForm();
-        $this->editing = false;
-    }
-
-    public function edit(AboutSection $aboutSection)
-    {
-        $this->aboutSection = $aboutSection;
-        $this->title = $aboutSection->title;
-        $this->subtitle = $aboutSection->subtitle;
-        $this->description = $aboutSection->description;
-        $this->cta_text = $aboutSection->cta_text;
-        $this->cta_link = $aboutSection->cta_link;
-        $this->is_active = $aboutSection->is_active;
-        $this->sort_order = $aboutSection->sort_order;
-        $this->editing = true;
+        // Carica la prima sezione disponibile (attiva o meno) o crea una nuova se non esiste
+        $this->aboutSection = AboutSection::orderBy('sort_order')
+            ->orderBy('created_at')
+            ->first();
         
-        session()->flash('message', 'Sezione About caricata per la modifica');
+        if (!$this->aboutSection) {
+            // Se non esiste, crea una sezione vuota
+            $this->aboutSection = AboutSection::create([
+                'title' => '',
+                'subtitle' => '',
+                'description' => '',
+                'cta_text' => '',
+                'cta_link' => '',
+                'is_active' => true,
+                'sort_order' => 0
+            ]);
+        }
         
-        // Apri il modal
-        $this->dispatch('openModal');
+        // Carica i dati nel form
+        $this->title = $this->aboutSection->title ?? '';
+        $this->subtitle = $this->aboutSection->subtitle ?? '';
+        $this->description = $this->aboutSection->description ?? '';
+        $this->cta_text = $this->aboutSection->cta_text ?? '';
+        $this->cta_link = $this->aboutSection->cta_link ?? '';
+        $this->is_active = $this->aboutSection->is_active ?? true;
+        $this->sort_order = $this->aboutSection->sort_order ?? 0;
     }
 
     public function save()
@@ -81,7 +87,7 @@ class AboutManagement extends Component
         $data = [
             'title' => $this->title,
             'subtitle' => $this->subtitle,
-            'description' => $this->description,
+            'description' => $this->description, // HTML content from Trix editor
             'cta_text' => $this->cta_text,
             'cta_link' => $this->cta_link,
             'is_active' => $this->is_active,
@@ -108,47 +114,30 @@ class AboutManagement extends Component
             $data['image_3_sizes'] = json_encode($processed['sizes'] ?? []);
         }
 
-        if ($this->editing) {
-            $this->aboutSection->update($data);
-            session()->flash('message', 'Sezione About aggiornata con successo!');
-        } else {
-            AboutSection::create($data);
-            session()->flash('message', 'Sezione About creata con successo!');
-        }
-
-        $this->resetForm();
+        // Aggiorna sempre la sezione esistente usando fill e save
+        $this->aboutSection->fill($data);
+        $this->aboutSection->save();
         
-        // Chiudi il modal
-        $this->dispatch('closeModal');
+        // Refresh the aboutSection model to get updated data
+        $this->aboutSection->refresh();
         
-        // Forza la chiusura del modal se necessario
-        $this->dispatch('forceCloseModal');
-    }
-
-    public function delete(AboutSection $aboutSection)
-    {
-        $aboutSection->delete();
-        session()->flash('message', 'Sezione About eliminata con successo!');
-    }
-
-    public function toggleActive(AboutSection $aboutSection)
-    {
-        $aboutSection->update(['is_active' => !$aboutSection->is_active]);
-        session()->flash('message', 'Stato della sezione About aggiornato!');
-    }
-
-    private function resetForm()
-    {
-        $this->title = '';
-        $this->subtitle = '';
-        $this->description = '';
-        $this->cta_text = '';
-        $this->cta_link = '';
+        // Aggiorna le proprietà del componente con i valori salvati
+        $this->title = $this->aboutSection->title ?? '';
+        $this->subtitle = $this->aboutSection->subtitle ?? '';
+        $this->description = $this->aboutSection->description ?? '';
+        $this->cta_text = $this->aboutSection->cta_text ?? '';
+        $this->cta_link = $this->aboutSection->cta_link ?? '';
+        $this->is_active = $this->aboutSection->is_active ?? true;
+        $this->sort_order = $this->aboutSection->sort_order ?? 0;
+        
+        // Reset immagini
         $this->image_1 = null;
         $this->image_2 = null;
         $this->image_3 = null;
-        $this->is_active = true;
-        $this->sort_order = 0;
-        $this->editing = false;
+        
+        // Dispatch event to update Trix editor and inputs
+        $this->dispatch('about-section-saved');
+        
+        session()->flash('message', 'Sezione About aggiornata con successo!');
     }
 }

@@ -244,6 +244,12 @@ class SettingsManagement extends Component
         if (isset($this->settings['general']['contact_email'])) {
             $this->updateSetting('general', 'contact_email', $this->settings['general']['contact_email']);
         }
+        if (isset($this->settings['general']['cir'])) {
+            $this->updateSetting('general', 'cir', $this->settings['general']['cir']);
+        }
+        if (isset($this->settings['general']['cin'])) {
+            $this->updateSetting('general', 'cin', $this->settings['general']['cin']);
+        }
         if (isset($this->settings['general']['map_latitude'])) {
             $this->updateSetting('general', 'map_latitude', $this->settings['general']['map_latitude']);
         }

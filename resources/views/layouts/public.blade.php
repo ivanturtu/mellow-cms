@@ -422,6 +422,20 @@
                 @endphp
                 <a href="{{ $emailUrl }}" class="text-dark text-decoration-none">{{ $emailValue }}</a>
               </li>
+              @php
+                $cir = \App\Models\Setting::where('group', 'general')->where('key', 'cir')->first();
+                $cin = \App\Models\Setting::where('group', 'general')->where('key', 'cin')->first();
+              @endphp
+              @if($cir && $cir->value)
+              <li class="text-dark">
+                <span class="text-dark">CIR: {{ $cir->value }}</span>
+              </li>
+              @endif
+              @if($cin && $cin->value)
+              <li class="text-dark">
+                <span class="text-dark">CIN: {{ $cin->value }}</span>
+              </li>
+              @endif
             </ul>
           </div>
         </div>

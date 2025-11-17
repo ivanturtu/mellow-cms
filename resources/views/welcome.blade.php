@@ -142,7 +142,11 @@
                 <div class="row align-items-start mt-3 mt-lg-5">
                     <div class="col-lg-6">
                         <div class="p-5">
-                            <p id="about-description" data-full-text="{{ $aboutSection->description }}">{{ $aboutSection->description }}</p>
+                            @if($aboutSection->description)
+                                <div id="about-description" data-full-text="{{ htmlspecialchars($aboutSection->description, ENT_QUOTES, 'UTF-8') }}">{!! $aboutSection->description !!}</div>
+                            @else
+                                <div id="about-description" data-full-text=""></div>
+                            @endif
                             @if($aboutSection->cta_text)
                                 <a href="{{ $aboutSection->cta_link ?? '#rooms' }}" class="btn btn-arrow btn-primary mt-3"
                                    @if(str_starts_with($aboutSection->cta_link ?? '', '#'))
@@ -661,28 +665,103 @@
             const aboutDescription = document.getElementById('about-description');
             
             if (aboutDescription) {
-                const fullText = aboutDescription.getAttribute('data-full-text');
-                const words = fullText.trim().split(/\s+/);
+                // Get the full text from data attribute (HTML encoded)
+                const encodedHTML = aboutDescription.getAttribute('data-full-text') || '';
+                
+                // If no content, don't do anything
+                if (!encodedHTML || encodedHTML.trim() === '') {
+                    return;
+                }
+                
+                // Get the current HTML content (already rendered)
+                const currentHTML = aboutDescription.innerHTML;
+                
+                // Decode HTML entities properly
+                const tempDecode = document.createElement('textarea');
+                tempDecode.innerHTML = encodedHTML;
+                const fullTextHTML = tempDecode.value;
+                
+                // Extract text content to count words
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = fullTextHTML;
+                const textContent = tempDiv.textContent || tempDiv.innerText || '';
+                const words = textContent.trim().split(/\s+/).filter(w => w.length > 0);
                 let isExpanded = false;
                 
                 if (words.length > 60) {
-                    const truncatedText = words.slice(0, 60).join(' ');
+                    // Create a function to truncate HTML at word boundary
+                    function truncateHTML(html, maxWords) {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const body = doc.body;
+                        
+                        if (!body || !body.hasChildNodes()) {
+                            // Fallback: simple text truncation
+                            const textOnly = textContent.trim().split(/\s+/).slice(0, maxWords).join(' ');
+                            return textOnly;
+                        }
+                        
+                        let wordCount = 0;
+                        const walker = document.createTreeWalker(
+                            body,
+                            NodeFilter.SHOW_TEXT,
+                            null,
+                            false
+                        );
+                        
+                        let node;
+                        while ((node = walker.nextNode()) && wordCount < maxWords) {
+                            const nodeText = node.textContent || '';
+                            const nodeWords = nodeText.trim().split(/\s+/).filter(w => w.length > 0);
+                            
+                            if (wordCount + nodeWords.length <= maxWords) {
+                                wordCount += nodeWords.length;
+                            } else {
+                                // Truncate this node
+                                const remainingWords = maxWords - wordCount;
+                                const wordsToKeep = nodeWords.slice(0, remainingWords);
+                                const lastWord = wordsToKeep[remainingWords - 1];
+                                const lastWordIndex = nodeText.indexOf(lastWord);
+                                const textToKeep = nodeText.substring(0, lastWordIndex + lastWord.length);
+                                node.textContent = textToKeep;
+                                wordCount = maxWords;
+                                
+                                // Remove remaining text nodes
+                                let nextNode;
+                                while ((nextNode = walker.nextNode())) {
+                                    nextNode.textContent = '';
+                                }
+                                break;
+                            }
+                        }
+                        
+                        return body.innerHTML;
+                    }
+                    
+                    const truncatedHTML = truncateHTML(fullTextHTML, 60);
+                    
                     const readMoreLink = document.createElement('a');
                     readMoreLink.href = '#';
                     readMoreLink.className = 'text-primary text-decoration-none ms-1';
                     readMoreLink.style.cursor = 'pointer';
                     readMoreLink.textContent = 'leggi di più';
                     
-                    aboutDescription.innerHTML = truncatedText + ' ';
+                    // Set truncated content
+                    aboutDescription.innerHTML = truncatedHTML + ' ';
                     aboutDescription.appendChild(readMoreLink);
                     
                     readMoreLink.addEventListener('click', function(e) {
                         e.preventDefault();
                         if (!isExpanded) {
-                            aboutDescription.textContent = fullText;
+                            aboutDescription.innerHTML = fullTextHTML;
                             isExpanded = true;
                         }
                     });
+                } else {
+                    // If less than 60 words, ensure content is displayed
+                    if (!currentHTML || currentHTML.trim() === '') {
+                        aboutDescription.innerHTML = fullTextHTML;
+                    }
                 }
             }
             

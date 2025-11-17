@@ -413,7 +413,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     // Clear any previous validation errors
                     clearValidationErrors(form);
-                    showModal('error', 'Errore', data.message || 'Errore durante l\'invio del messaggio.');
+                showModal('error', 'Errore', data.message || 'Errore durante l\'invio del messaggio.');
                 }
             }
         })
@@ -510,7 +510,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (message.includes('<br>')) {
             modalMessage.innerHTML = message;
         } else {
-            modalMessage.textContent = message;
+        modalMessage.textContent = message;
         }
         modal.show();
         

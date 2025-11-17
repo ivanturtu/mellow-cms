@@ -126,6 +126,24 @@
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
+                        <label class="form-label">CIR</label>
+                        <input type="text" 
+                               wire:model.lazy="settings.general.cir" 
+                               class="form-control" 
+                               placeholder="Codice Identificativo Registrazione">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">CIN</label>
+                        <input type="text" 
+                               wire:model.lazy="settings.general.cin" 
+                               class="form-control" 
+                               placeholder="Codice Identificativo Nazionale">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
                         <label class="form-label">Latitudine Mappa</label>
                         <input type="text" 
                                wire:model.lazy="settings.general.map_latitude" 
