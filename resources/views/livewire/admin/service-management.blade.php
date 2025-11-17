@@ -101,17 +101,7 @@
                             <div class="mb-3">
                                 <label class="form-label">Immagine</label>
                                 
-                                <!-- Image Upload Options -->
-                                <div class="d-grid gap-2 mb-3">
-                                    <button type="button" wire:click="showImageUploadModal" class="btn btn-outline-primary">
-                                        <i class="fas fa-upload me-2"></i>Carica con Drag & Drop
-                                    </button>
-                                    <div class="text-center">
-                                        <small class="text-muted">oppure</small>
-                                    </div>
-                                </div>
-                                
-                                <!-- Traditional File Input -->
+                                <!-- File Input -->
                                 <input type="file" wire:model="image" class="form-control @error('image') is-invalid @enderror" 
                                        id="image" accept="image/*">
                                 @error('image') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -222,34 +212,4 @@
         </div>
     @endif
 
-    <!-- Image Upload Modal -->
-    @if($showImageUpload)
-        <div class="modal fade show" style="display: block;" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Carica Immagine con Drag & Drop</h5>
-                        <button type="button" wire:click="hideImageUploadModal" class="btn-close"></button>
-                    </div>
-                    <div class="modal-body">
-                        @livewire('admin.image-upload', ['folder' => 'services', 'maxFiles' => 1], key('image-upload-' . $id))
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" wire:click="hideImageUploadModal" class="btn btn-secondary">
-                            <i class="fas fa-times me-2"></i>Chiudi
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-backdrop fade show"></div>
-    @endif
 </div>
-
-<script>
-document.addEventListener('livewire:init', function () {
-    Livewire.on('imageUploaded', (imagePath) => {
-        @this.setUploadedImage(imagePath);
-    });
-});
-</script>

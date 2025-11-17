@@ -34,10 +34,6 @@ class GalleryManagement extends Component
     // Properties for editing
     public $editingGallery = null;
     public $showForm = false;
-    
-    // Properties for drag & drop
-    public $showImageUpload = false;
-    public $uploadedImage = null;
 
     // Properties for listing
     public $search = '';
@@ -124,19 +120,6 @@ class GalleryManagement extends Component
             // Generate WEBP responsive sizes based on the stored original
             $processed = $this->processStoredImage($storedPath, 'gallery');
             $data['image_sizes'] = json_encode($processed['sizes'] ?? []);
-        } elseif ($this->uploadedImage) {
-            // Handle drag & drop uploaded image
-            // Delete old image if editing
-            if ($this->editingGallery && $this->editingGallery->image) {
-                Storage::disk('public')->delete($this->editingGallery->image);
-            }
-            
-            // Use the uploaded image path directly
-            $data['image'] = $this->uploadedImage;
-
-            // Generate WEBP responsive sizes for the already stored file
-            $processed = $this->processStoredImage($this->uploadedImage, 'gallery');
-            $data['image_sizes'] = json_encode($processed['sizes'] ?? []);
         }
 
         if ($this->editingGallery) {
@@ -182,7 +165,6 @@ class GalleryManagement extends Component
         $this->title = '';
         $this->description = '';
         $this->image = null;
-        $this->uploadedImage = null;
         $this->category = '';
         $this->is_active = true;
         $this->sort_order = 0;
@@ -227,24 +209,5 @@ class GalleryManagement extends Component
     {
         $this->resetForm();
         $this->closeModal();
-    }
-
-    public function showImageUploadModal()
-    {
-        $this->showImageUpload = true;
-    }
-
-    public function hideImageUploadModal()
-    {
-        $this->showImageUpload = false;
-    }
-
-    public function setUploadedImage($imagePath)
-    {
-        $this->uploadedImage = $imagePath;
-        // Store the image path for later use in save method
-        $this->image = null; // Clear any existing file upload
-        $this->showImageUpload = false;
-        session()->flash('success', 'Immagine caricata con successo!');
     }
 }

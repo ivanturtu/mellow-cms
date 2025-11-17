@@ -184,29 +184,7 @@
                                         Immagine {{ !$editingRoom ? '*' : '' }}
                                     </label>
                                     
-                <!-- Drag & Drop Zone -->
-                <div class="drop-zone {{ $dragOver ? 'drag-over' : '' }}" 
-                     wire:drop="drop"
-                     wire:dragover="dragOver"
-                     wire:dragleave="dragLeave"
-                     onclick="document.getElementById('image').click()">
-                    
-                    <div class="drop-zone-content text-center">
-                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">Trascina l'immagine qui</h5>
-                        <p class="text-muted small">oppure clicca per selezionare</p>
-                        <p class="text-muted small">
-                            Formati supportati: JPEG, PNG, JPG, GIF<br>
-                            Dimensione massima: 2MB
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-2">
-                    <small class="text-muted">oppure</small>
-                </div>
-                                    
-                                    <!-- Traditional File Input -->
+                                    <!-- File Input -->
                                     <input type="file" wire:model="image" class="form-control @error('image') is-invalid @enderror" 
                                            id="image" accept="image/*">
                                     @error('image') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -365,33 +343,6 @@
             </div>
         @endif
 
-    <script>
-    (function initRoomDnd(){
-        function preventDefaults(e){ e.preventDefault(); e.stopPropagation(); }
-        // Global prevention so browser doesn't open the file
-        ['dragenter','dragover','dragleave','drop'].forEach(function(eventName){
-            window.addEventListener(eventName, preventDefaults, true);
-            document.addEventListener(eventName, preventDefaults, true);
-        });
-
-        // Delegated drop handler works across Livewire re-renders
-        document.addEventListener('drop', function(e){
-            const dropContainer = e.target && (e.target.closest ? e.target.closest('.drop-zone') : null);
-            if (!dropContainer) return;
-            const dt = e.dataTransfer;
-            const files = dt ? dt.files : null;
-            if (!files || files.length === 0) return;
-            const input = document.getElementById('image');
-            if (input) {
-                input.files = files;
-                input.dispatchEvent(new Event('change', { bubbles: true }));
-            }
-        }, true);
-
-        // Rebind after Livewire DOM morphs
-        document.addEventListener('livewire:navigated', initRoomDnd, { once: true });
-    })();
-    </script>
 
 </div>
 

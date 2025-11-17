@@ -28,10 +28,6 @@ class ServiceManagement extends Component
     // Properties for editing
     public $editingService = null;
     public $showForm = false;
-    
-    // Properties for drag & drop
-    public $showImageUpload = false;
-    public $uploadedImage = null;
 
     // Properties for listing
     public $search = '';
@@ -106,17 +102,6 @@ class ServiceManagement extends Component
             $data['image'] = $storedPath;
             $processed = $this->processStoredImage($storedPath, 'services');
             $data['image_sizes'] = json_encode($processed['sizes'] ?? []);
-        } elseif ($this->uploadedImage) {
-            // Handle drag & drop uploaded image
-            // Delete old image if editing
-            if ($this->editingService && $this->editingService->image) {
-                Storage::disk('public')->delete($this->editingService->image);
-            }
-            
-            // Use the uploaded image path directly
-            $data['image'] = $this->uploadedImage;
-            $processed = $this->processStoredImage($this->uploadedImage, 'services');
-            $data['image_sizes'] = json_encode($processed['sizes'] ?? []);
         }
 
         if ($this->editingService) {
@@ -163,7 +148,6 @@ class ServiceManagement extends Component
         $this->description = '';
         $this->icon = '';
         $this->image = null;
-        $this->uploadedImage = null;
         $this->is_active = true;
         $this->sort_order = 0;
         $this->editingService = null;
@@ -174,24 +158,5 @@ class ServiceManagement extends Component
     public function cancel()
     {
         $this->resetForm();
-    }
-
-    public function showImageUploadModal()
-    {
-        $this->showImageUpload = true;
-    }
-
-    public function hideImageUploadModal()
-    {
-        $this->showImageUpload = false;
-    }
-
-    public function setUploadedImage($imagePath)
-    {
-        $this->uploadedImage = $imagePath;
-        // Store the image path for later use in save method
-        $this->image = null; // Clear any existing file upload
-        $this->showImageUpload = false;
-        session()->flash('success', 'Immagine caricata con successo!');
     }
 }

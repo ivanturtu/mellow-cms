@@ -27,9 +27,6 @@ class SliderManagement extends Component
     public $is_active = true;
     public $sort_order = 0;
     
-    // Properties for image upload
-    public $uploadedImage = null;
-    public $showImageUpload = false;
 
     // Properties for editing
     public $editingSlider = null;
@@ -179,27 +176,7 @@ class SliderManagement extends Component
         $this->sort_order = 0;
         $this->editingSlider = null;
         $this->showForm = false;
-        $this->uploadedImage = null;
-        $this->showImageUpload = false;
         $this->resetErrorBag();
-    }
-
-    public function showImageUploadModal()
-    {
-        $this->showImageUpload = true;
-    }
-
-    public function hideImageUploadModal()
-    {
-        $this->showImageUpload = false;
-    }
-
-    public function setUploadedImage($imagePath)
-    {
-        $this->uploadedImage = $imagePath;
-        $this->image = $imagePath;
-        $this->showImageUpload = false;
-        session()->flash('success', 'Immagine caricata con successo!');
     }
 
     public function cancel()

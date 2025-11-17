@@ -37,16 +37,11 @@ class RoomManagement extends Component
     // Properties for editing
     public $editingRoom = null;
     public $showForm = false;
-    
-    // Properties for drag & drop
-    public $uploadedImage = null;
-    public $dragOver = false;
 
     // Room gallery management
     public $roomImages = [];
     public $roomGalleryImage = null; // legacy single file input
     public $roomGalleryImages = []; // multiple files input
-    public $roomGalleryUploadedImage = null; // path via DnD (if implemented later)
 
     // Properties for listing
     public $search = '';
@@ -168,19 +163,6 @@ class RoomManagement extends Component
             
             // Store only sizes mapping for future use
             $data['image_sizes'] = json_encode($processedImages['sizes'] ?? []);
-        } elseif ($this->uploadedImage) {
-            // Handle drag & drop uploaded image
-            // Delete old image if editing
-            if ($this->editingRoom && $this->editingRoom->image) {
-                Storage::disk('public')->delete($this->editingRoom->image);
-            }
-            
-            // Use the uploaded image path directly
-            $data['image'] = $this->uploadedImage;
-
-            // Generate WEBP responsive sizes for the stored file
-            $processed = $this->processStoredImage($this->uploadedImage, 'rooms');
-            $data['image_sizes'] = json_encode($processed['sizes'] ?? []);
         }
 
         if ($this->editingRoom) {
@@ -226,7 +208,6 @@ class RoomManagement extends Component
         $this->name = '';
         $this->description = '';
         $this->image = null;
-        $this->uploadedImage = null;
         $this->price = 0;
         $this->size = '';
         $this->capacity = 1;
@@ -248,30 +229,11 @@ class RoomManagement extends Component
         $this->roomImages = [];
         $this->roomGalleryImage = null;
         $this->roomGalleryImages = [];
-        $this->roomGalleryUploadedImage = null;
     }
 
     public function cancel()
     {
         $this->resetForm();
-    }
-
-
-
-    public function dragOver()
-    {
-        $this->dragOver = true;
-    }
-
-    public function dragLeave()
-    {
-        $this->dragOver = false;
-    }
-
-    public function drop()
-    {
-        $this->dragOver = false;
-        // The file will be handled by the file input when dropped
     }
 
     // ---------- Room Gallery Methods ----------
