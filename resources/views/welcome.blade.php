@@ -142,7 +142,7 @@
                 <div class="row align-items-start mt-3 mt-lg-5">
                     <div class="col-lg-6">
                         <div class="p-5">
-                            <p>{{ $aboutSection->description }}</p>
+                            <p id="about-description" data-full-text="{{ $aboutSection->description }}">{{ $aboutSection->description }}</p>
                             @if($aboutSection->cta_text)
                                 <a href="{{ $aboutSection->cta_link ?? '#rooms' }}" class="btn btn-arrow btn-primary mt-3"
                                    @if(str_starts_with($aboutSection->cta_link ?? '', '#'))
@@ -657,6 +657,35 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Truncate about description to 60 words with inline "leggi di più"
+            const aboutDescription = document.getElementById('about-description');
+            
+            if (aboutDescription) {
+                const fullText = aboutDescription.getAttribute('data-full-text');
+                const words = fullText.trim().split(/\s+/);
+                let isExpanded = false;
+                
+                if (words.length > 60) {
+                    const truncatedText = words.slice(0, 60).join(' ');
+                    const readMoreLink = document.createElement('a');
+                    readMoreLink.href = '#';
+                    readMoreLink.className = 'text-primary text-decoration-none ms-1';
+                    readMoreLink.style.cursor = 'pointer';
+                    readMoreLink.textContent = 'leggi di più';
+                    
+                    aboutDescription.innerHTML = truncatedText + ' ';
+                    aboutDescription.appendChild(readMoreLink);
+                    
+                    readMoreLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (!isExpanded) {
+                            aboutDescription.textContent = fullText;
+                            isExpanded = true;
+                        }
+                    });
+                }
+            }
+            
             // Handle both desktop and mobile forms
             const desktopForm = document.getElementById('check_available');
             const mobileForm = document.getElementById('check_available_mobile');
