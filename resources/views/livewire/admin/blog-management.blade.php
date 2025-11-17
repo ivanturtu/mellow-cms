@@ -270,8 +270,19 @@
 
 <script>
 document.addEventListener('livewire:init', function () {
+    console.log('[BlogManagement Debug] Registering imageUploaded listener');
+    
     Livewire.on('imageUploaded', (imagePath) => {
+        console.log('[BlogManagement Debug] imageUploaded event received:', imagePath);
         @this.setUploadedImage(imagePath);
+    });
+    
+    // Also listen for the event on the component directly
+    Livewire.on('imagesUploaded', (images) => {
+        console.log('[BlogManagement Debug] imagesUploaded event received:', images);
+        if (images && images.length > 0) {
+            @this.setUploadedImage(images[0].path);
+        }
     });
 });
 </script>

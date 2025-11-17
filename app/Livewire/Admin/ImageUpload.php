@@ -60,15 +60,28 @@ class ImageUpload extends Component
         $this->images = [];
         
         // Debug: Log the uploaded images
-        \Log::info('ImageUpload: Uploaded images', $this->uploadedImages);
+        \Log::info('ImageUpload: Uploaded images', [
+            'count' => count($this->uploadedImages),
+            'images' => $this->uploadedImages,
+            'component_id' => $this->id
+        ]);
         
         // Dispatch the uploaded images array
         $this->dispatch('imagesUploaded', $this->uploadedImages);
         
         // Also dispatch individual image paths for single file uploads
         if (count($this->uploadedImages) === 1) {
-            \Log::info('ImageUpload: Dispatching imageUploaded', ['path' => $this->uploadedImages[0]['path']]);
-            $this->dispatch('imageUploaded', $this->uploadedImages[0]['path']);
+            $imagePath = $this->uploadedImages[0]['path'];
+            \Log::info('ImageUpload: Dispatching imageUploaded event', [
+                'path' => $imagePath,
+                'component_id' => $this->id
+            ]);
+            
+            // Dispatch both globally and to parent component
+            $this->dispatch('imageUploaded', $imagePath);
+            
+            // Also try broadcasting to ensure parent receives it
+            $this->dispatch('imageUploaded', imagePath: $imagePath);
         }
     }
 
