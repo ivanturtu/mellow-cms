@@ -97,30 +97,6 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label class="form-label">Immagine</label>
-                                
-                                <!-- File Input -->
-                                <input type="file" wire:model="image" class="form-control @error('image') is-invalid @enderror" 
-                                       id="image" accept="image/*">
-                                @error('image') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                                
-                                <!-- Image Preview -->
-                                @if($image)
-                                    <div class="mt-2">
-                                        <img src="{{ $image->temporaryUrl() }}" alt="Preview" 
-                                             class="img-thumbnail" style="max-width: 200px;">
-                                    </div>
-                                @elseif($editingService && $editingService->image)
-                                    <div class="mt-2">
-                                        <img src="{{ asset('storage/' . $editingService->image) }}" alt="Current" 
-                                             class="img-thumbnail" style="max-width: 200px;">
-                                        <small class="text-muted d-block">Immagine attuale</small>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
                     </div>
 
                     <div class="d-flex gap-2">
@@ -159,9 +135,6 @@
                                     <td>
                                         @if($service->icon)
                                             <i class="{{ $service->icon }} fa-2x text-primary"></i>
-                                        @elseif($service->image)
-                                            <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" 
-                                                 class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover;">
                                         @else
                                             <i class="fas fa-concierge-bell fa-2x text-muted"></i>
                                         @endif

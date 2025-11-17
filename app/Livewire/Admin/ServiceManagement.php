@@ -4,21 +4,16 @@ namespace App\Livewire\Admin;
 
 use App\Models\Service;
 use Livewire\Component;
-use Livewire\WithFileUploads;
 use Livewire\Attributes\Layout;
-use App\Traits\HandlesImageOptimization;
-use Illuminate\Support\Facades\Storage;
 
 #[Layout('components.layouts.admin')]
 class ServiceManagement extends Component
 {
-    use WithFileUploads, HandlesImageOptimization;
 
     // Properties for form
     public $name = '';
     public $description = '';
     public $icon = '';
-    public $image;
     public $is_active = true;
     public $sort_order = 0;
 
@@ -38,7 +33,6 @@ class ServiceManagement extends Component
         'name' => 'required|string|max:255',
         'description' => 'required|string',
         'icon' => 'nullable|string|max:255',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'is_active' => 'boolean',
         'sort_order' => 'integer|min:0'
     ];
@@ -92,18 +86,6 @@ class ServiceManagement extends Component
             'sort_order' => $this->sort_order,
         ];
 
-        // Handle image upload with WEBP variants
-        if ($this->image) {
-            // Delete old image if editing
-            if ($this->editingService && $this->editingService->image) {
-                Storage::disk('public')->delete($this->editingService->image);
-            }
-            $storedPath = $this->image->store('services', 'public');
-            $data['image'] = $storedPath;
-            $processed = $this->processStoredImage($storedPath, 'services');
-            $data['image_sizes'] = json_encode($processed['sizes'] ?? []);
-        }
-
         if ($this->editingService) {
             $this->editingService->update($data);
             session()->flash('success', 'Servizio aggiornato con successo!');
@@ -117,11 +99,6 @@ class ServiceManagement extends Component
 
     public function delete(Service $service)
     {
-        // Delete image
-        if ($service->image) {
-            Storage::disk('public')->delete($service->image);
-        }
-
         $service->delete();
         session()->flash('success', 'Servizio eliminato con successo!');
     }
@@ -147,7 +124,6 @@ class ServiceManagement extends Component
         $this->name = '';
         $this->description = '';
         $this->icon = '';
-        $this->image = null;
         $this->is_active = true;
         $this->sort_order = 0;
         $this->editingService = null;
