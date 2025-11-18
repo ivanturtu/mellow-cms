@@ -381,12 +381,12 @@
                             <use xlink:href="#arrow-right"></use>
                         </svg>
                     </div>
-                    <div class="position-absolute top-100 end-50 translate-middle gallery-button-prev mt-5 d-md-none d-block">
+                    <div class="position-absolute bottom-0 end-50 translate-middle-x gallery-button-prev mb-2 d-md-none d-block" style="z-index: 10;">
                         <svg class="bg-secondary rounded-circle p-2" width="50" height="50">
                             <use xlink:href="#arrow-left"></use>
                         </svg>
                     </div>
-                    <div class="position-absolute top-100 start-50 translate-middle gallery-button-next mt-5 ms-4 d-md-none d-block">
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x gallery-button-next mb-2 ms-4 d-md-none d-block" style="z-index: 10;">
                         <svg class="bg-secondary rounded-circle p-2" width="50" height="50">
                             <use xlink:href="#arrow-right"></use>
                         </svg>
@@ -395,7 +395,7 @@
                 
                 <!-- Gallery Thumbnails -->
                 @if($gallery->count() > 1)
-                    <div class="container-fluid padding-side mt-4 mt-md-5 mb-4">
+                    <div class="container-fluid padding-side mt-2 mt-md-4 mb-4">
                         <div class="row justify-content-center">
                             <div class="col-12 px-2 px-md-3">
                                 <div class="swiper gallery-thumbnails-swiper">
@@ -607,6 +607,10 @@
         
         /* Increase gallery image sizes on mobile */
         @media (max-width: 768px) {
+            #gallery .container.position-relative {
+                padding-bottom: 70px;
+            }
+            
             .gallery-swiper {
                 padding: 0 10px;
             }
