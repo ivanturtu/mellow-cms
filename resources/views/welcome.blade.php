@@ -343,11 +343,11 @@
         <!-- Gallery Section -->
         @if($gallery->count() > 0)
             <section id="gallery" data-aos="fade-up">
-                <h3 class="display-3 fw-normal text-center">Gallery</h3>
-                <p class="text-center col-lg-4 offset-lg-4 mb-5">Esplora le immagini delle nostre sistemazioni ben arredate, con servizi moderni e arredamento elegante progettato per rendere il vostro soggiorno indimenticabile.</p>
+                <h3 class="display-3 fw-normal text-center px-3">Gallery</h3>
+                <p class="text-center col-12 col-md-8 col-lg-4 offset-md-2 offset-lg-4 mb-4 mb-md-5 px-3">Esplora le immagini delle nostre sistemazioni ben arredate, con servizi moderni e arredamento elegante progettato per rendere il vostro soggiorno indimenticabile.</p>
                 <div class="container position-relative">
                     <div class="row">
-                        <div class="swiper gallery-swiper offset-1 col-10">
+                        <div class="swiper gallery-swiper col-12 col-md-10 offset-md-1">
                             <div class="swiper-wrapper">
                                 @foreach($gallery as $item)
                                     <div class="swiper-slide">
@@ -395,9 +395,9 @@
                 
                 <!-- Gallery Thumbnails -->
                 @if($gallery->count() > 1)
-                    <div class="container-fluid padding-side mt-5 mb-4">
+                    <div class="container-fluid padding-side mt-4 mt-md-5 mb-4">
                         <div class="row justify-content-center">
-                            <div class="col-12">
+                            <div class="col-12 px-2 px-md-3">
                                 <div class="swiper gallery-thumbnails-swiper">
                                     <div class="swiper-wrapper">
                                         @foreach($gallery as $index => $item)
@@ -407,7 +407,7 @@
                                                          alt="{{ $item->title }}" 
                                                          class="gallery-thumbnail img-fluid rounded-3"
                                                          srcset="{{ $item->getResponsiveSrcset() }}"
-                                                         sizes="(max-width: 768px) 25vw, 150px">
+                                                         sizes="(max-width: 576px) 30vw, (max-width: 768px) 20vw, 150px">
                                                 </div>
                                             </div>
                                         @endforeach
@@ -454,11 +454,11 @@
         @if($blogs->count() > 0)
             <section id="blog" class="padding-medium pt-0">
                 <div class="container-fluid padding-side" data-aos="fade-up">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between">
-                        <div>
-                            <h3 class="display-3 fw-normal text-center">Blog ed eventi</h3>
+                    <div class="d-flex flex-column flex-md-row flex-wrap align-items-center justify-content-md-between justify-content-center mb-4 mb-md-0">
+                        <div class="w-100 w-md-auto text-center text-md-start mb-3 mb-md-0">
+                            <h3 class="display-3 fw-normal">Blog ed eventi</h3>
                         </div>
-                        <a href="{{ route('blog.index') }}" class="btn btn-arrow btn-primary mt-3">
+                        <a href="{{ route('blog.index') }}" class="btn btn-arrow btn-primary mt-0 mt-md-3">
                             <span>Archivio Blog<svg width="18" height="18">
                                     <use xlink:href="#arrow-right"></use>
                                 </svg></span>
@@ -607,11 +607,25 @@
         
         /* Increase gallery image sizes on mobile */
         @media (max-width: 768px) {
+            .gallery-swiper {
+                padding: 0 10px;
+            }
+            
+            .gallery-swiper .swiper-slide {
+                padding: 0 5px;
+            }
+            
             .gallery-swiper .swiper-slide img {
                 height: 320px !important;
                 object-fit: cover;
                 width: 100%;
                 display: block;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .gallery-swiper .swiper-slide img {
+                height: 280px !important;
             }
         }
 
@@ -696,16 +710,36 @@
 
         @media (max-width: 768px) {
             .gallery-thumbnail {
-                height: 90px;
+                height: 100px;
+                min-height: 100px;
             }
             
             .gallery-thumbnails-swiper {
-                padding: 15px 0;
+                padding: 20px 10px;
+            }
+            
+            .gallery-thumbnail-wrapper {
+                padding: 5px;
             }
 
             .gallery-thumbnails-swiper:not(.swiper-initialized) .gallery-thumbnail {
-                width: 100px;
+                width: 120px;
+                height: 100px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .gallery-thumbnail {
                 height: 90px;
+                min-height: 90px;
+            }
+            
+            .gallery-thumbnails-swiper {
+                padding: 15px 5px;
+            }
+            
+            .gallery-thumbnail-wrapper {
+                padding: 4px;
             }
         }
 
@@ -719,11 +753,27 @@
 
         /* Mobile blog images */
         @media (max-width: 768px) {
+            #blog {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            #blog .display-3 {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
+            
             .blog-post img.blog-img {
                 height: 350px;
                 object-fit: cover;
                 width: 100%;
                 display: block;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            #blog .display-3 {
+                font-size: 1.75rem;
             }
         }
 
