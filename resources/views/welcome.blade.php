@@ -392,6 +392,31 @@
                         </svg>
                     </div>
                 </div>
+                
+                <!-- Gallery Thumbnails -->
+                @if($gallery->count() > 1)
+                    <div class="container-fluid padding-side mt-5 mb-4">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <div class="swiper gallery-thumbnails-swiper">
+                                    <div class="swiper-wrapper">
+                                        @foreach($gallery as $index => $item)
+                                            <div class="swiper-slide" data-gallery-index="{{ $index }}">
+                                                <div class="gallery-thumbnail-wrapper">
+                                                    <img src="{{ $item->getOptimizedImageUrl('sm') }}" 
+                                                         alt="{{ $item->title }}" 
+                                                         class="gallery-thumbnail img-fluid rounded-3"
+                                                         srcset="{{ $item->getResponsiveSrcset() }}"
+                                                         sizes="(max-width: 768px) 25vw, 150px">
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </section>
         @endif
 
@@ -597,6 +622,90 @@
                 object-fit: cover;
                 width: 100%;
                 display: block;
+            }
+        }
+
+        /* Gallery Thumbnails Styles */
+        .gallery-thumbnails-section {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .gallery-thumbnails-swiper {
+            padding: 20px 0;
+            margin: 0 auto;
+            max-width: 1200px;
+            overflow: visible !important;
+        }
+
+        .gallery-thumbnails-swiper .swiper-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .gallery-thumbnail-wrapper {
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0.7;
+            padding: 8px;
+            display: block;
+            width: 100%;
+        }
+
+        .gallery-thumbnail-wrapper:hover {
+            transform: scale(1.08);
+            opacity: 1;
+        }
+
+        .gallery-thumbnail-wrapper.swiper-slide-thumb-active {
+            opacity: 1;
+        }
+
+        .gallery-thumbnail {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border: 3px solid transparent;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            display: block;
+        }
+
+        .gallery-thumbnail-wrapper.swiper-slide-thumb-active .gallery-thumbnail {
+            border-color: var(--bs-primary, #007bff);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Fallback: show thumbnails even without swiper */
+        .gallery-thumbnails-swiper:not(.swiper-initialized) .swiper-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .gallery-thumbnails-swiper:not(.swiper-initialized) .swiper-slide {
+            width: auto;
+            flex: 0 0 auto;
+            min-width: 150px;
+        }
+
+        .gallery-thumbnails-swiper:not(.swiper-initialized) .gallery-thumbnail {
+            width: 150px;
+            height: 120px;
+        }
+
+        @media (max-width: 768px) {
+            .gallery-thumbnail {
+                height: 90px;
+            }
+            
+            .gallery-thumbnails-swiper {
+                padding: 15px 0;
+            }
+
+            .gallery-thumbnails-swiper:not(.swiper-initialized) .gallery-thumbnail {
+                width: 100px;
+                height: 90px;
             }
         }
 
