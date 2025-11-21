@@ -499,9 +499,8 @@
         /* Mobile Booking Trigger Button */
         .mobile-booking-trigger {
             position: fixed;
-            top: 50%;
-            left: 20px;
-            transform: translateY(-50%);
+            bottom: 20px;
+            right: 20px;
             z-index: 1000;
         }
         
@@ -519,7 +518,7 @@
         }
         
         .mobile-booking-trigger .btn:hover {
-            transform: translateX(5px);
+            transform: scale(1.1);
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
         
