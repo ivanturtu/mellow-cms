@@ -168,11 +168,37 @@
 
     // Gallery Swiper
     if (document.querySelector(".gallery-swiper")) {
+      // Inizializza prima le thumbnail
+      var galleryThumbnailsSwiper = null;
+      if (document.querySelector(".gallery-thumbnails-swiper")) {
+        galleryThumbnailsSwiper = new Swiper(".gallery-thumbnails-swiper", {
+          spaceBetween: 10,
+          slidesPerView: 'auto',
+          freeMode: true,
+          watchSlidesProgress: true,
+          breakpoints: {
+            0: {
+              slidesPerView: 3,
+            },
+            576: {
+              slidesPerView: 4,
+            },
+            768: {
+              slidesPerView: 5,
+            },
+            992: {
+              slidesPerView: 6,
+            },
+          },
+        });
+      }
+      
+      // Inizializza la gallery principale con collegamento alle thumbnail
       var gallerySwiper = new Swiper(".gallery-swiper", {
         effect: "slide",
         slidesPerView: 1,
         spaceBetween: 30,
-        loop: true,
+        loop: false, // Disabilitato per permettere la sincronizzazione corretta con le thumbnail
         autoplay: {
           delay: 3000,
           disableOnInteraction: false,
@@ -181,8 +207,24 @@
           nextEl: ".gallery-button-next",
           prevEl: ".gallery-button-prev",
         },
-        // Rimuovo i breakpoints per mostrare sempre 1 immagine
+        thumbs: galleryThumbnailsSwiper ? {
+          swiper: galleryThumbnailsSwiper,
+        } : undefined,
       });
+      
+      // Aggiungi event listener per i click sulle thumbnail (fallback se thumbs non funziona)
+      if (galleryThumbnailsSwiper) {
+        const thumbnailSlides = document.querySelectorAll('.gallery-thumbnail-wrapper');
+        thumbnailSlides.forEach((thumbnail, index) => {
+          thumbnail.style.cursor = 'pointer';
+          thumbnail.addEventListener('click', function(e) {
+            e.preventDefault();
+            gallerySwiper.slideTo(index);
+            // Aggiorna anche la thumbnail attiva
+            galleryThumbnailsSwiper.slideTo(index);
+          });
+        });
+      }
       
       console.log("Gallery Swiper initialized");
     }
