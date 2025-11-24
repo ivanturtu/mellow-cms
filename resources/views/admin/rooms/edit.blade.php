@@ -1,3 +1,21 @@
+<!-- Trix Editor CSS -->
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
+<style>
+    trix-editor {
+        min-height: 200px;
+    }
+    trix-toolbar {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-bottom: none;
+        border-radius: 0.375rem 0.375rem 0 0;
+    }
+    trix-editor.form-control {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+</style>
+
 <x-layouts.admin title="Modifica Camera">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Modifica Camera</h2>
@@ -25,8 +43,10 @@
 
                         <div class="mb-3">
                             <label for="description" class="form-label">Descrizione *</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror" 
-                                      id="description" name="description" rows="4" required>{{ old('description', $room->description) }}</textarea>
+                            <input id="description" type="hidden" name="description" value="{{ old('description', $room->description) }}">
+                            <trix-editor input="description" 
+                                        class="form-control @error('description') is-invalid @enderror"
+                                        placeholder="Descrizione della camera..."></trix-editor>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -162,6 +182,9 @@
         </div>
     </div>
 
+    <!-- Trix Editor JS -->
+    <script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
+    
     <script>
         document.getElementById('image').addEventListener('change', function(e) {
             const file = e.target.files[0];

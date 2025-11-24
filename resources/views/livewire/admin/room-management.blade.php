@@ -1,4 +1,21 @@
 <div>
+    <!-- Trix Editor CSS -->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
+    <style>
+        trix-editor {
+            min-height: 200px;
+        }
+        trix-toolbar {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-bottom: none;
+            border-radius: 0.375rem 0.375rem 0 0;
+        }
+        trix-editor.form-control {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    </style>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Camere</h2>
             <button wire:click="create" class="btn btn-primary">
@@ -53,7 +70,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form wire:submit="save">
+                    <form wire:submit="save" onsubmit="syncAndSubmitRoom(); return false;">
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="mb-3">
@@ -65,8 +82,10 @@
 
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Descrizione *</label>
-                                    <textarea wire:model="description" class="form-control @error('description') is-invalid @enderror" 
-                                              id="description" rows="4" required></textarea>
+                                    <input id="description" type="hidden" value="{{ $description }}">
+                                    <trix-editor input="description" 
+                                                class="form-control @error('description') is-invalid @enderror"
+                                                placeholder="Descrizione della camera..."></trix-editor>
                                     @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
 
@@ -343,7 +362,118 @@
             </div>
         @endif
 
+    <!-- Trix Editor JS -->
+    <script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
 
+    <script>
+    document.addEventListener('livewire:init', function () {
+        // Listen to Trix changes and update Livewire immediately
+        document.addEventListener('trix-change', function(event) {
+            if (event.target && event.target.input && event.target.input.id === 'description') {
+                const hiddenInput = document.getElementById('description');
+                if (hiddenInput) {
+                    try {
+                        const trixContent = hiddenInput.value || '';
+                        @this.set('description', trixContent);
+                    } catch (e) {
+                        // Component not available, ignore
+                    }
+                }
+            }
+        });
+        
+        // Also listen for Trix input events
+        document.addEventListener('trix-input', function(event) {
+            if (event.target && event.target.input && event.target.input.id === 'description') {
+                const hiddenInput = document.getElementById('description');
+                if (hiddenInput) {
+                    try {
+                        const trixContent = hiddenInput.value || '';
+                        @this.set('description', trixContent);
+                    } catch (e) {
+                        // Component not available, ignore
+                    }
+                }
+            }
+        });
+        
+        // Function to sync Trix with Livewire description
+        function syncTrixWithLivewire() {
+            const trixEditor = document.querySelector('trix-editor[input="description"]');
+            const descriptionInput = document.getElementById('description');
+            
+            if (!trixEditor || !trixEditor.editor || !descriptionInput) {
+                return false;
+            }
+            
+            try {
+                const livewireDescription = @this.description || '';
+                
+                if (!livewireDescription.trim()) {
+                    return false;
+                }
+                
+                const currentInputValue = descriptionInput.value || '';
+                const currentTrixHTML = trixEditor.editor.getDocument().toString();
+                
+                if (currentInputValue !== livewireDescription && currentTrixHTML !== livewireDescription) {
+                    trixEditor.editor.loadHTML(livewireDescription);
+                    descriptionInput.value = livewireDescription;
+                    return true;
+                }
+            } catch (e) {
+                // Component not available, ignore
+                return false;
+            }
+            return false;
+        }
+        
+        // Function to sync Trix and submit form
+        window.syncAndSubmitRoom = function() {
+            // Sync all form fields explicitly
+            const nameInput = document.getElementById('name');
+            if (nameInput) {
+                @this.set('name', nameInput.value || '');
+            }
+            
+            // Sync Trix description - this is critical
+            const descriptionInput = document.getElementById('description');
+            if (descriptionInput) {
+                const trixContent = descriptionInput.value || '';
+                // Update Livewire with Trix content
+                @this.set('description', trixContent);
+            }
+            
+            // Sync other fields that might not be synced
+            const priceInput = document.getElementById('price');
+            if (priceInput) {
+                @this.set('price', parseFloat(priceInput.value) || 0);
+            }
+            
+            const capacityInput = document.getElementById('capacity');
+            if (capacityInput) {
+                @this.set('capacity', parseInt(capacityInput.value) || 1);
+            }
+            
+            // Wait a bit longer for Livewire to process all updates, then call save
+            setTimeout(() => {
+                @this.call('save');
+            }, 500);
+        };
+        
+        // Sync Trix when Livewire updates description
+        Livewire.hook('morph.updated', ({ component }) => {
+            setTimeout(() => {
+                syncTrixWithLivewire();
+            }, 100);
+        });
+        
+        // Sync when component is loaded
+        setTimeout(() => {
+            syncTrixWithLivewire();
+        }, 500);
+    });
+    </script>
 </div>
 
 

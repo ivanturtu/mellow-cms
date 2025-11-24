@@ -218,7 +218,7 @@
             <div class="row mt-5">
                 <div class="col-12">
                     <h3 class="display-5 mb-4">Room Details</h3>
-                    <p class="lead">{{ $room->description }}</p>
+                    <div id="room-description" data-full-text="{{ htmlspecialchars($room->description, ENT_QUOTES, 'UTF-8') }}" class="lead">{!! $room->description !!}</div>
                 </div>
             </div>
         @endif
@@ -369,6 +369,110 @@ function changeMainImage(imageSrc, imageAlt) {
 
 // Handle booking form submission
 document.addEventListener('DOMContentLoaded', function() {
+    // Truncate room description to 60 words with inline "leggi di più"
+    const roomDescription = document.getElementById('room-description');
+    
+    if (roomDescription) {
+        // Get the full text from data attribute (HTML encoded)
+        const encodedHTML = roomDescription.getAttribute('data-full-text') || '';
+        
+        // If no content, don't do anything
+        if (!encodedHTML || encodedHTML.trim() === '') {
+            return;
+        }
+        
+        // Get the current HTML content (already rendered)
+        const currentHTML = roomDescription.innerHTML;
+        
+        // Decode HTML entities properly
+        const tempDecode = document.createElement('textarea');
+        tempDecode.innerHTML = encodedHTML;
+        const fullTextHTML = tempDecode.value;
+        
+        // Extract text content to count words
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = fullTextHTML;
+        const textContent = tempDiv.textContent || tempDiv.innerText || '';
+        const words = textContent.trim().split(/\s+/).filter(w => w.length > 0);
+        let isExpanded = false;
+        
+        if (words.length > 60) {
+            // Create a function to truncate HTML at word boundary
+            function truncateHTML(html, maxWords) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const body = doc.body;
+                
+                if (!body || !body.hasChildNodes()) {
+                    // Fallback: simple text truncation
+                    const textOnly = textContent.trim().split(/\s+/).slice(0, maxWords).join(' ');
+                    return textOnly;
+                }
+                
+                let wordCount = 0;
+                const walker = document.createTreeWalker(
+                    body,
+                    NodeFilter.SHOW_TEXT,
+                    null,
+                    false
+                );
+                
+                let node;
+                while ((node = walker.nextNode()) && wordCount < maxWords) {
+                    const nodeText = node.textContent || '';
+                    const nodeWords = nodeText.trim().split(/\s+/).filter(w => w.length > 0);
+                    
+                    if (wordCount + nodeWords.length <= maxWords) {
+                        wordCount += nodeWords.length;
+                    } else {
+                        // Truncate this node
+                        const remainingWords = maxWords - wordCount;
+                        const wordsToKeep = nodeWords.slice(0, remainingWords);
+                        const lastWord = wordsToKeep[remainingWords - 1];
+                        const lastWordIndex = nodeText.indexOf(lastWord);
+                        const textToKeep = nodeText.substring(0, lastWordIndex + lastWord.length);
+                        node.textContent = textToKeep;
+                        wordCount = maxWords;
+                        
+                        // Remove remaining text nodes
+                        let nextNode;
+                        while ((nextNode = walker.nextNode())) {
+                            nextNode.textContent = '';
+                        }
+                        break;
+                    }
+                }
+                
+                return body.innerHTML;
+            }
+            
+            const truncatedHTML = truncateHTML(fullTextHTML, 60);
+            
+            const readMoreLink = document.createElement('a');
+            readMoreLink.href = '#';
+            readMoreLink.className = 'text-primary text-decoration-none ms-1';
+            readMoreLink.style.cursor = 'pointer';
+            readMoreLink.textContent = 'leggi di più';
+            
+            // Set truncated content
+            roomDescription.innerHTML = truncatedHTML + ' ';
+            roomDescription.appendChild(readMoreLink);
+            
+            readMoreLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (!isExpanded) {
+                    roomDescription.innerHTML = fullTextHTML;
+                    isExpanded = true;
+                }
+            });
+        } else {
+            // If less than 60 words, ensure content is displayed
+            if (!currentHTML || currentHTML.trim() === '') {
+                roomDescription.innerHTML = fullTextHTML;
+            }
+        }
+    }
+    
     const bookingForm = document.getElementById('check_available');
     
     // Date validation: update checkout min date when checkin changes
