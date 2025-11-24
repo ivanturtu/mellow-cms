@@ -16,7 +16,7 @@
                                     <div class="slider-overlay"></div>
                                             <div class="row align-items-center pt-5 ps-5">
                                                 <div class="text-start col-md-6 col-lg-5 col-xl-6">
-                                            <h2 class="display-1 fw-normal">{{ $slider->title }}</h2>
+                                            <h2 class="display-1 fw-normal text-white">{{ $slider->title }}</h2>
                                             @if($slider->description)
                                                 <p class="lead text-white mt-3">{{ $slider->description }}</p>
                                             @endif
@@ -269,68 +269,64 @@
                     <div class="swiper-wrapper">
                         @foreach($rooms as $room)
                             <div class="swiper-slide">
-                                <div class="room-item position-relative rounded-4 overflow-hidden" 
-                                     style="background-image: url('{{ $room->getOptimizedImageUrl('lg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 650px;">
-                                    <div class="room-overlay position-absolute top-0 start-0 w-100 h-100 d-none d-lg-block"></div>
-                                    <div class="product-description position-relative p-5 text-start h-100 d-flex flex-column justify-content-end d-none d-lg-flex">
-                                        <h4 class="display-6 fw-normal text-white mb-3">
-                                            <a href="{{ route('room.details', $room->slug) }}" class="text-white text-decoration-none">
+                                <a href="{{ route('room.details', $room->slug) }}" class="room-item-link text-decoration-none">
+                                    <div class="room-item position-relative rounded-4 overflow-hidden" 
+                                         style="background-image: url('{{ $room->getOptimizedImageUrl('lg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 650px;">
+                                        <div class="room-overlay position-absolute top-0 start-0 w-100 h-100 d-none d-lg-block"></div>
+                                        <div class="product-description position-relative p-5 text-start h-100 d-flex flex-column justify-content-end d-none d-lg-flex">
+                                            <h4 class="display-6 fw-normal text-white mb-3">
                                                 {{ $room->name }}
-                                            </a>
-                                        </h4>
-                                        <table class="mb-3">
-                                            <tbody>
-                                                <tr class="text-white">
-                                                    <td class="pe-2">Prezzo:</td>
-                                                    <td class="price">
-                                                        @if($room->show_price ?? true)
-                                                            €{{ $room->price }} /Notte
-                                                        @else
-                                                            Prezzi su richiesta
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                                <tr class="text-white">
-                                                    <td class="pe-2">Dimensione:</td>
-                                                    <td>{{ $room->size }}</td>
-                                                </tr>
-                                                <tr class="text-white">
-                                                    <td class="pe-2">Capacità:</td>
-                                                    <td>Max {{ $room->capacity }} persone</td>
-                                                </tr>
-                                                <tr class="text-white">
-                                                    <td class="pe-2">Letto:</td>
-                                                    <td>{{ $room->bed_type }}</td>
-                                                </tr>
-                                                <tr class="text-white">
-                                                    <td class="pe-2">Servizi:</td>
-                                                    <td>{{ $room->services }}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <a href="{{ route('room.details', $room->slug) }}">
+                                            </h4>
+                                            <table class="mb-3">
+                                                <tbody>
+                                                    <tr class="text-white">
+                                                        <td class="pe-2">Prezzo:</td>
+                                                        <td class="price">
+                                                            @if($room->show_price ?? true)
+                                                                €{{ $room->price }} /Notte
+                                                            @else
+                                                                Prezzi su richiesta
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="text-white">
+                                                        <td class="pe-2">Dimensione:</td>
+                                                        <td>{{ $room->size }}</td>
+                                                    </tr>
+                                                    <tr class="text-white">
+                                                        <td class="pe-2">Capacità:</td>
+                                                        <td>Max {{ $room->capacity }} persone</td>
+                                                    </tr>
+                                                    <tr class="text-white">
+                                                        <td class="pe-2">Letto:</td>
+                                                        <td>{{ $room->bed_type }}</td>
+                                                    </tr>
+                                                    <tr class="text-white">
+                                                        <td class="pe-2">Servizi:</td>
+                                                        <td>{{ $room->services }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                             <p class="text-decoration-underline text-white m-0">Sfoglia Ora</p>
-                                        </a>
-                                    </div>
-                                    <!-- Mobile content -->
-                                    <div class="room-mobile-content d-lg-none position-absolute bottom-0 start-0 w-100 p-4 bg-white">
-                                        <h4 class="h3 fw-normal mb-2">
-                                            <a href="{{ route('room.details', $room->slug) }}" class="text-dark text-decoration-none">
+                                        </div>
+                                        <!-- Mobile content -->
+                                        <div class="room-mobile-content d-lg-none position-absolute bottom-0 start-0 w-100 p-4 bg-white">
+                                            <h4 class="h3 fw-normal mb-2 text-dark">
                                                 {{ $room->name }}
-                                            </a>
-                                        </h4>
-                                        <p class="mb-2 text-muted">
-                                            @if($room->show_price ?? true)
-                                                €{{ $room->price }} /Notte
-                                            @else
-                                                Prezzi su richiesta
-                                            @endif
-                                        </p>
-                                        <a href="{{ route('room.details', $room->slug) }}" class="text-primary text-decoration-none">
-                                            Scopri di più →
-                                        </a>
+                                            </h4>
+                                            <p class="mb-2 text-muted">
+                                                @if($room->show_price ?? true)
+                                                    €{{ $room->price }} /Notte
+                                                @else
+                                                    Prezzi su richiesta
+                                                @endif
+                                            </p>
+                                            <span class="text-primary text-decoration-none">
+                                                Scopri di più →
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         @endforeach
                     </div>
@@ -823,12 +819,29 @@
             height: auto;
         }
 
+        .room-item-link {
+            display: block;
+            width: 100%;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .room-item-link:hover {
+            transform: translateY(-5px);
+            opacity: 0.95;
+        }
+
+        .room-item-link:hover .room-item {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
         .room-item {
             width: 100%;
             min-height: 650px;
             display: flex;
             flex-direction: column;
             position: relative;
+            transition: box-shadow 0.3s ease;
         }
 
         .room-overlay {
