@@ -19,7 +19,7 @@ class HomeController extends Controller
     {
         $sliders = Slider::active()->ordered()->get();
         $rooms = Room::active()->ordered()->limit(6)->get();
-        $gallery = Gallery::active()->ordered()->limit(6)->get();
+        $gallery = Gallery::active()->ordered()->get();
         $services = Service::active()->ordered()->get();
         $blogs = Blog::published()->orderBy('published_at', 'desc')->limit(3)->get();
         $statistics = Statistic::active()->ordered()->get();
