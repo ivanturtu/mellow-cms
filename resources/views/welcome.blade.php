@@ -397,20 +397,22 @@
                 @if($gallery->count() > 1)
                     <div class="container-fluid padding-side mt-2 mt-md-4 mb-4">
                         <div class="row justify-content-center">
-                            <div class="col-12 px-2 px-md-3">
-                                <div class="swiper gallery-thumbnails-swiper">
-                                    <div class="swiper-wrapper">
-                                        @foreach($gallery as $index => $item)
-                                            <div class="swiper-slide" data-gallery-index="{{ $index }}">
-                                                <div class="gallery-thumbnail-wrapper">
-                                                    <img src="{{ $item->getOptimizedImageUrl('sm') }}" 
-                                                         alt="{{ $item->title }}" 
-                                                         class="gallery-thumbnail img-fluid rounded-3"
-                                                         srcset="{{ $item->getResponsiveSrcset() }}"
-                                                         sizes="(max-width: 576px) 30vw, (max-width: 768px) 20vw, 150px">
+                            <div class="col-12">
+                                <div class="gallery-thumbnails-container">
+                                    <div class="swiper gallery-thumbnails-swiper">
+                                        <div class="swiper-wrapper">
+                                            @foreach($gallery as $index => $item)
+                                                <div class="swiper-slide" data-gallery-index="{{ $index }}">
+                                                    <div class="gallery-thumbnail-wrapper">
+                                                        <img src="{{ $item->getOptimizedImageUrl('sm') }}" 
+                                                             alt="{{ $item->title }}" 
+                                                             class="gallery-thumbnail img-fluid rounded-3"
+                                                             srcset="{{ $item->getResponsiveSrcset() }}"
+                                                             sizes="(max-width: 576px) 30vw, (max-width: 768px) 20vw, 150px">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        @endforeach
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -496,6 +498,12 @@
         @endif
 
     <style>
+        /* Prevent horizontal scroll */
+        body, html {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+
         /* Mobile Booking Trigger Button */
         .mobile-booking-trigger {
             position: fixed;
@@ -648,11 +656,18 @@
             padding: 0;
         }
 
+        .gallery-thumbnails-container {
+            width: 100%;
+            overflow-x: hidden;
+            padding: 0;
+        }
+
         .gallery-thumbnails-swiper {
             padding: 20px 0;
             margin: 0 auto;
-            max-width: 1200px;
-            overflow: visible !important;
+            max-width: 100%;
+            width: 100%;
+            overflow: hidden;
         }
 
         .gallery-thumbnails-swiper .swiper-wrapper {
@@ -667,6 +682,7 @@
             padding: 8px;
             display: block;
             width: 100%;
+            box-sizing: border-box;
         }
 
         .gallery-thumbnail-wrapper:hover {
@@ -718,7 +734,7 @@
             }
             
             .gallery-thumbnails-swiper {
-                padding: 20px 10px;
+                padding: 20px 0;
             }
             
             .gallery-thumbnail-wrapper {
@@ -738,7 +754,7 @@
             }
             
             .gallery-thumbnails-swiper {
-                padding: 15px 5px;
+                padding: 15px 0;
             }
             
             .gallery-thumbnail-wrapper {
