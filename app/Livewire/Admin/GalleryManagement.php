@@ -185,24 +185,45 @@ class GalleryManagement extends Component
         $this->closeModal();
     }
 
-    public function processBulkUpload($images)
+    public function processBulkUpload()
     {
-        $this->uploadedImages = $images;
+        if (empty($this->uploadedImages)) {
+            session()->flash('error', 'Nessuna immagine selezionata.');
+            return;
+        }
+        
+        // Validate uploaded images
+        $this->validate([
+            'uploadedImages' => 'required|array',
+            'uploadedImages.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+        
+        $maxSortOrder = Gallery::max('sort_order') ?? 0;
+        
+        $count = count($this->uploadedImages);
         
         // Create gallery entries for each uploaded image
-        foreach ($images as $index => $image) {
+        foreach ($this->uploadedImages as $index => $uploadedImage) {
+            // Store the original image first
+            $storedPath = $uploadedImage->store('gallery', 'public');
+            
+            // Generate WEBP responsive sizes based on the stored original
+            $processed = $this->processStoredImage($storedPath, 'gallery');
+            
             Gallery::create([
-                'title' => $image['name'] ?? 'Immagine ' . ($index + 1),
+                'title' => $uploadedImage->getClientOriginalName() ?? 'Immagine ' . ($index + 1),
                 'description' => '',
-                'image' => $image['path'],
+                'image' => $storedPath,
+                'image_sizes' => json_encode($processed['sizes'] ?? []),
                 'category' => $this->category,
                 'is_active' => $this->is_active,
-                'sort_order' => $this->sort_order + $index,
+                'sort_order' => $maxSortOrder + $index + 1,
             ]);
         }
         
+        $this->uploadedImages = [];
         $this->hideBulkUploadModal();
-        session()->flash('success', count($images) . ' immagini caricate con successo!');
+        session()->flash('success', $count . ' immagini caricate con successo!');
     }
 
     public function cancel()
